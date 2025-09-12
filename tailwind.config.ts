@@ -47,6 +47,15 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Indian-inspired colors
+        "royal-red": "hsl(var(--royal-red))",
+        "royal-red-light": "hsl(var(--royal-red-light))",
+        gold: "hsl(var(--gold))",
+        "gold-light": "hsl(var(--gold-light))",
+        emerald: "hsl(var(--emerald))",
+        "emerald-light": "hsl(var(--emerald-light))",
+        cream: "hsl(var(--cream))",
+        "warm-white": "hsl(var(--warm-white))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -57,6 +66,15 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      backgroundImage: {
+        "gradient-royal": "var(--gradient-royal)",
+        "gradient-gold": "var(--gradient-gold)",
+        "gradient-elegant": "var(--gradient-elegant)",
+      },
+      boxShadow: {
+        elegant: "var(--shadow-elegant)",
+        gold: "var(--shadow-gold)",
       },
       borderRadius: {
         lg: "var(--radius)",
