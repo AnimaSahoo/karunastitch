@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, User, MapPin } from "lucide-react";
+import { Upload, User, MapPin, Ruler } from "lucide-react";
 import { toast } from "sonner";
 
 interface OrderFormData {
@@ -15,6 +15,21 @@ interface OrderFormData {
   city: string;
   pincode: string;
   specialRequests: string;
+  measurements: {
+    blouseBackLength: string;
+    fullShoulder: string;
+    shoulderStrap: string;
+    backNeckDepth: string;
+    frontNeckDepth: string;
+    shoulderToApex: string;
+    frontLength: string;
+    chest: string;
+    waist: string;
+    sleeveLength: string;
+    armRound: string;
+    sleeveRound: string;
+    armHole: string;
+  };
 }
 
 interface OrderFormProps {
@@ -30,12 +45,34 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
     city: "",
     pincode: "",
     specialRequests: "",
+    measurements: {
+      blouseBackLength: "",
+      fullShoulder: "",
+      shoulderStrap: "",
+      backNeckDepth: "",
+      frontNeckDepth: "",
+      shoulderToApex: "",
+      frontLength: "",
+      chest: "",
+      waist: "",
+      sleeveLength: "",
+      armRound: "",
+      sleeveRound: "",
+      armHole: "",
+    },
   });
   
   const [uploadedFiles, setUploadedFiles] = useState<FileList | null>(null);
 
   const handleInputChange = (field: keyof OrderFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleMeasurementChange = (field: keyof OrderFormData['measurements'], value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      measurements: { ...prev.measurements, [field]: value }
+    }));
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,6 +233,185 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
                   {uploadedFiles.length} file(s) selected
                 </p>
               )}
+            </div>
+          </div>
+
+          {/* Measurements */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-lg font-semibold text-royal-red">
+              <Ruler className="h-5 w-5" />
+              Blouse Measurements (in inches)
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="blouseBackLength" className="text-sm font-medium">
+                  1. Blouse Back Length
+                </Label>
+                <Input
+                  id="blouseBackLength"
+                  value={formData.measurements.blouseBackLength}
+                  onChange={(e) => handleMeasurementChange("blouseBackLength", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="fullShoulder" className="text-sm font-medium">
+                  2. Full Shoulder
+                </Label>
+                <Input
+                  id="fullShoulder"
+                  value={formData.measurements.fullShoulder}
+                  onChange={(e) => handleMeasurementChange("fullShoulder", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="shoulderStrap" className="text-sm font-medium">
+                  3. Shoulder Strap
+                </Label>
+                <Input
+                  id="shoulderStrap"
+                  value={formData.measurements.shoulderStrap}
+                  onChange={(e) => handleMeasurementChange("shoulderStrap", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="backNeckDepth" className="text-sm font-medium">
+                  4. Back Neck Depth
+                </Label>
+                <Input
+                  id="backNeckDepth"
+                  value={formData.measurements.backNeckDepth}
+                  onChange={(e) => handleMeasurementChange("backNeckDepth", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="frontNeckDepth" className="text-sm font-medium">
+                  5. Front Neck Depth
+                </Label>
+                <Input
+                  id="frontNeckDepth"
+                  value={formData.measurements.frontNeckDepth}
+                  onChange={(e) => handleMeasurementChange("frontNeckDepth", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="shoulderToApex" className="text-sm font-medium">
+                  6. Shoulder to Apex
+                </Label>
+                <Input
+                  id="shoulderToApex"
+                  value={formData.measurements.shoulderToApex}
+                  onChange={(e) => handleMeasurementChange("shoulderToApex", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="frontLength" className="text-sm font-medium">
+                  7. Front Length
+                </Label>
+                <Input
+                  id="frontLength"
+                  value={formData.measurements.frontLength}
+                  onChange={(e) => handleMeasurementChange("frontLength", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="chest" className="text-sm font-medium">
+                  8. Chest (around)
+                </Label>
+                <Input
+                  id="chest"
+                  value={formData.measurements.chest}
+                  onChange={(e) => handleMeasurementChange("chest", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="waist" className="text-sm font-medium">
+                  9. Waist (around)
+                </Label>
+                <Input
+                  id="waist"
+                  value={formData.measurements.waist}
+                  onChange={(e) => handleMeasurementChange("waist", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="sleeveLength" className="text-sm font-medium">
+                  10. Sleeve Length
+                </Label>
+                <Input
+                  id="sleeveLength"
+                  value={formData.measurements.sleeveLength}
+                  onChange={(e) => handleMeasurementChange("sleeveLength", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="armRound" className="text-sm font-medium">
+                  11. Arm Round
+                </Label>
+                <Input
+                  id="armRound"
+                  value={formData.measurements.armRound}
+                  onChange={(e) => handleMeasurementChange("armRound", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="sleeveRound" className="text-sm font-medium">
+                  12. Sleeve Round
+                </Label>
+                <Input
+                  id="sleeveRound"
+                  value={formData.measurements.sleeveRound}
+                  onChange={(e) => handleMeasurementChange("sleeveRound", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="armHole" className="text-sm font-medium">
+                  13. Arm Hole
+                </Label>
+                <Input
+                  id="armHole"
+                  value={formData.measurements.armHole}
+                  onChange={(e) => handleMeasurementChange("armHole", e.target.value)}
+                  placeholder="inches"
+                  className="border-2 border-border focus:border-royal-red"
+                />
+              </div>
             </div>
           </div>
 
