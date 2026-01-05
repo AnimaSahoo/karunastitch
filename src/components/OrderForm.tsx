@@ -4,10 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, User, MapPin, Ruler, Shirt } from "lucide-react";
+import { Upload, User, MapPin, Ruler, Shirt, Calendar, Download } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
-
+import * as XLSX from "xlsx";
 interface OrderFormData {
   customerName: string;
   email: string;
@@ -15,6 +15,7 @@ interface OrderFormData {
   address: string;
   city: string;
   pincode: string;
+  deliveryDate: string;
   specialRequests: string;
   blouseType: "princess-cut" | "standard";
   hookPosition: "front-hook" | "back-hook";
@@ -47,6 +48,7 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
     address: "",
     city: "",
     pincode: "",
+    deliveryDate: "",
     specialRequests: "",
     blouseType: "standard",
     hookPosition: "back-hook",
@@ -88,10 +90,44 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
     }
   };
 
+  const handleExportToExcel = () => {
+    const exportData = {
+      "Customer Name": formData.customerName,
+      "Email": formData.email,
+      "Phone": formData.phone,
+      "Address": formData.address,
+      "City": formData.city,
+      "Pincode": formData.pincode,
+      "Delivery Date": formData.deliveryDate,
+      "Blouse Type": formData.blouseType === "princess-cut" ? "Princess Cut" : "Standard",
+      "Hook Position": formData.hookPosition === "front-hook" ? "Front Hook" : "Back Hook",
+      "Blouse Back Length": formData.measurements.blouseBackLength,
+      "Full Shoulder": formData.measurements.fullShoulder,
+      "Shoulder Strap": formData.measurements.shoulderStrap,
+      "Back Neck Depth": formData.measurements.backNeckDepth,
+      "Front Neck Depth": formData.measurements.frontNeckDepth,
+      "Shoulder to Apex": formData.measurements.shoulderToApex,
+      "Front Length": formData.measurements.frontLength,
+      "Chest": formData.measurements.chest,
+      "Waist": formData.measurements.waist,
+      "Sleeve Length": formData.measurements.sleeveLength,
+      "Arm Round": formData.measurements.armRound,
+      "Sleeve Round": formData.measurements.sleeveRound,
+      "Arm Hole": formData.measurements.armHole,
+      "Special Requests": formData.specialRequests,
+    };
+
+    const worksheet = XLSX.utils.json_to_sheet([exportData]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Order Details");
+    XLSX.writeFile(workbook, `order_${formData.customerName || "customer"}_${new Date().toISOString().split('T')[0]}.xlsx`);
+    toast.success("Order exported to Excel successfully!");
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.customerName || !formData.phone || !formData.address) {
+    if (!formData.customerName || !formData.phone || !formData.address || !formData.deliveryDate) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -205,11 +241,34 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
             </div>
           </div>
 
+          {/* Delivery Date */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-lg font-semibold text-royal-red">
+              <Calendar className="h-5 w-5" />
+              Delivery Date
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="deliveryDate" className="text-base font-medium">
+                Expected Delivery Date *
+              </Label>
+              <Input
+                id="deliveryDate"
+                type="date"
+                value={formData.deliveryDate}
+                onChange={(e) => handleInputChange("deliveryDate", e.target.value)}
+                required
+                min={new Date().toISOString().split('T')[0]}
+                className="border-2 border-border focus:border-royal-red"
+              />
+            </div>
+          </div>
+
           {/* Material Upload */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-lg font-semibold text-royal-red">
               <Upload className="h-5 w-5" />
-              Upload Material Photos
+              Upload Blouse Design
             </div>
             
             <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-royal-red transition-colors">
@@ -227,7 +286,7 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
               >
                 <Upload className="h-8 w-8 text-muted-foreground" />
                 <div>
-                  <p className="text-base font-medium">Upload photos of your blouse material</p>
+                  <p className="text-base font-medium">Upload blouse design (pls include pic of your materials & full design)</p>
                   <p className="text-sm text-muted-foreground">
                     Click to browse or drag and drop images (PNG, JPG, JPEG)
                   </p>
@@ -488,14 +547,26 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
             />
           </div>
 
-          <Button 
-            type="submit" 
-            variant="elegant" 
-            size="lg" 
-            className="w-full text-lg font-semibold"
-          >
-            Continue to Design Selection
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button 
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={handleExportToExcel}
+              className="flex-1 text-lg font-semibold gap-2"
+            >
+              <Download className="h-5 w-5" />
+              Download as Excel
+            </Button>
+            <Button 
+              type="submit" 
+              variant="elegant" 
+              size="lg" 
+              className="flex-1 text-lg font-semibold"
+            >
+              Continue to Design Selection
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
