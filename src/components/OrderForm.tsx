@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, User, MapPin, Ruler } from "lucide-react";
+import { Upload, User, MapPin, Ruler, Shirt } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 
 interface OrderFormData {
@@ -15,6 +16,7 @@ interface OrderFormData {
   city: string;
   pincode: string;
   specialRequests: string;
+  blouseType: "princess-cut" | "standard";
   measurements: {
     blouseBackLength: string;
     fullShoulder: string;
@@ -45,6 +47,7 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
     city: "",
     pincode: "",
     specialRequests: "",
+    blouseType: "standard",
     measurements: {
       blouseBackLength: "",
       fullShoulder: "",
@@ -234,6 +237,33 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
                 </p>
               )}
             </div>
+          </div>
+
+          {/* Blouse Type */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-lg font-semibold text-royal-red">
+              <Shirt className="h-5 w-5" />
+              Blouse Type
+            </div>
+            
+            <RadioGroup
+              value={formData.blouseType}
+              onValueChange={(value: "princess-cut" | "standard") => handleInputChange("blouseType", value)}
+              className="flex flex-col sm:flex-row gap-4"
+            >
+              <div className="flex items-center space-x-3 border-2 border-border rounded-lg p-4 cursor-pointer hover:border-royal-red transition-colors">
+                <RadioGroupItem value="princess-cut" id="princess-cut" />
+                <Label htmlFor="princess-cut" className="cursor-pointer font-medium">
+                  Princess Cut
+                </Label>
+              </div>
+              <div className="flex items-center space-x-3 border-2 border-border rounded-lg p-4 cursor-pointer hover:border-royal-red transition-colors">
+                <RadioGroupItem value="standard" id="standard" />
+                <Label htmlFor="standard" className="cursor-pointer font-medium">
+                  Standard
+                </Label>
+              </div>
+            </RadioGroup>
           </div>
 
           {/* Measurements */}
