@@ -17,6 +17,7 @@ interface OrderFormData {
   pincode: string;
   specialRequests: string;
   blouseType: "princess-cut" | "standard";
+  hookPosition: "front-hook" | "back-hook";
   measurements: {
     blouseBackLength: string;
     fullShoulder: string;
@@ -48,6 +49,7 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
     pincode: "",
     specialRequests: "",
     blouseType: "standard",
+    hookPosition: "back-hook",
     measurements: {
       blouseBackLength: "",
       fullShoulder: "",
@@ -261,6 +263,33 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
                 <RadioGroupItem value="standard" id="standard" />
                 <Label htmlFor="standard" className="cursor-pointer font-medium">
                   Standard
+                </Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          {/* Hook Position */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-lg font-semibold text-royal-red">
+              <Shirt className="h-5 w-5" />
+              Hook Position
+            </div>
+            
+            <RadioGroup
+              value={formData.hookPosition}
+              onValueChange={(value: "front-hook" | "back-hook") => handleInputChange("hookPosition", value)}
+              className="flex flex-col sm:flex-row gap-4"
+            >
+              <div className="flex items-center space-x-3 border-2 border-border rounded-lg p-4 cursor-pointer hover:border-royal-red transition-colors">
+                <RadioGroupItem value="front-hook" id="front-hook" />
+                <Label htmlFor="front-hook" className="cursor-pointer font-medium">
+                  Front Hook
+                </Label>
+              </div>
+              <div className="flex items-center space-x-3 border-2 border-border rounded-lg p-4 cursor-pointer hover:border-royal-red transition-colors">
+                <RadioGroupItem value="back-hook" id="back-hook" />
+                <Label htmlFor="back-hook" className="cursor-pointer font-medium">
+                  Back Hook
                 </Label>
               </div>
             </RadioGroup>
