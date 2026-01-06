@@ -14,6 +14,24 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+interface PopularDesign {
+  id: string;
+  name: string;
+  description: string;
+  emoji: string;
+}
+
+const popularDesigns: PopularDesign[] = [
+  { id: "princess-cut", name: "Princess Cut", description: "Deep V-neck with darts", emoji: "👸" },
+  { id: "boat-neck", name: "Boat Neck", description: "Wide horizontal neckline", emoji: "⛵" },
+  { id: "sweetheart", name: "Sweetheart", description: "Heart-shaped neckline", emoji: "💖" },
+  { id: "halter-neck", name: "Halter Neck", description: "Ties behind the neck", emoji: "🎀" },
+  { id: "collar-neck", name: "Collar Neck", description: "Shirt-style collar", emoji: "👔" },
+  { id: "high-neck", name: "High Neck", description: "Full coverage neckline", emoji: "🔝" },
+  { id: "backless", name: "Backless", description: "Open back design", emoji: "✨" },
+  { id: "puff-sleeve", name: "Puff Sleeve", description: "Voluminous sleeves", emoji: "🎈" },
+];
+
 interface CustomDesignCanvasProps {
   onSaveDesign: (designData: string) => void;
 }
@@ -24,6 +42,7 @@ export const CustomDesignCanvas = ({ onSaveDesign }: CustomDesignCanvasProps) =>
   const [currentTool, setCurrentTool] = useState<"brush" | "rectangle" | "circle">("brush");
   const [currentColor, setCurrentColor] = useState("#8B0000");
   const [brushSize, setBrushSize] = useState(3);
+  const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -216,6 +235,37 @@ export const CustomDesignCanvas = ({ onSaveDesign }: CustomDesignCanvasProps) =>
         </p>
       </CardHeader>
       <CardContent className="p-6">
+        {/* Popular Designs Section */}
+        <div className="mb-8">
+          <h3 className="font-semibold text-lg text-royal-red mb-4">Popular Indian Blouse Styles</h3>
+          <p className="text-sm text-muted-foreground mb-4">Select a style for inspiration, then customize on the canvas below</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+            {popularDesigns.map((design) => (
+              <button
+                key={design.id}
+                onClick={() => setSelectedStyle(selectedStyle === design.id ? null : design.id)}
+                className={`p-3 rounded-lg border-2 transition-all text-center hover:shadow-md ${
+                  selectedStyle === design.id
+                    ? "border-royal-red bg-cream shadow-md scale-105"
+                    : "border-border hover:border-royal-gold"
+                }`}
+              >
+                <span className="text-2xl block mb-1">{design.emoji}</span>
+                <span className="text-xs font-medium block">{design.name}</span>
+              </button>
+            ))}
+          </div>
+          {selectedStyle && (
+            <div className="mt-3 p-3 bg-cream rounded-lg border border-royal-gold">
+              <p className="text-sm">
+                <strong>{popularDesigns.find(d => d.id === selectedStyle)?.name}:</strong>{" "}
+                {popularDesigns.find(d => d.id === selectedStyle)?.description}. 
+                <span className="text-muted-foreground"> Sketch your version on the canvas below!</span>
+              </p>
+            </div>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Tools Panel */}
           <div className="space-y-4">
