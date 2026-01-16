@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SketchCanvas } from "@/components/SketchCanvas";
 import { 
   Upload, 
   User, 
@@ -13,7 +14,6 @@ import {
   Ruler, 
   Palette, 
   Image as ImageIcon,
-  Brush,
   CheckCircle,
   X
 } from "lucide-react";
@@ -390,25 +390,19 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
 
                 <TabsContent value="sketch">
                   <p className="text-sm text-muted-foreground mb-4">
-                    Describe or sketch your custom design
+                    Draw your custom blouse design on the canvas below
                   </p>
                   <div className="space-y-4">
-                    <div className="border-2 border-dashed border-border rounded-lg p-8 text-center bg-cream">
-                      <Brush className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-                      <p className="font-medium">Sketch Canvas Coming Soon</p>
-                      <p className="text-sm text-muted-foreground">
-                        For now, please describe your design below
-                      </p>
-                    </div>
+                    <SketchCanvas onSave={(dataUrl) => setSketchData(dataUrl)} />
                     <div>
-                      <Label htmlFor="designDesc">Describe Your Design</Label>
+                      <Label htmlFor="designDesc">Additional Notes (Optional)</Label>
                       <Textarea
                         id="designDesc"
                         value={designDescription}
                         onChange={(e) => setDesignDescription(e.target.value)}
-                        placeholder="Describe the neckline, sleeves, back design, embroidery patterns, etc."
+                        placeholder="Add any details about neckline, sleeves, back design, embroidery patterns..."
                         className="mt-1"
-                        rows={4}
+                        rows={3}
                       />
                     </div>
                   </div>
