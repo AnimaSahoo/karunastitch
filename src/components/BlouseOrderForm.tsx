@@ -393,7 +393,15 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                     Draw your custom blouse design on the canvas below
                   </p>
                   <div className="space-y-4">
-                    <SketchCanvas onSave={(dataUrl) => setSketchData(dataUrl)} />
+                    <SketchCanvas 
+                      customerName={formData.fullName}
+                      onSave={(dataUrl, designName) => {
+                        setSketchData(dataUrl);
+                        if (designName) {
+                          console.log(`Design saved: ${designName}`);
+                        }
+                      }} 
+                    />
                     <div>
                       <Label htmlFor="designDesc">Additional Notes (Optional)</Label>
                       <Textarea

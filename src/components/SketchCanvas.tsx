@@ -4,12 +4,13 @@ import { Slider } from "@/components/ui/slider";
 import { Brush, Eraser, RotateCcw, Download, Circle, Square } from "lucide-react";
 
 interface SketchCanvasProps {
-  onSave: (dataUrl: string) => void;
+  onSave: (dataUrl: string, designName: string) => void;
+  customerName?: string;
 }
 
 type Tool = "brush" | "eraser" | "rectangle" | "circle";
 
-export const SketchCanvas = ({ onSave }: SketchCanvasProps) => {
+export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentTool, setCurrentTool] = useState<Tool>("brush");
@@ -180,9 +181,9 @@ export const SketchCanvas = ({ onSave }: SketchCanvasProps) => {
 
     setIsDrawing(false);
     
-    // Auto-save after drawing
+    // Auto-save after drawing (without name, just for preview)
     if (canvas) {
-      onSave(canvas.toDataURL("image/png"));
+      onSave(canvas.toDataURL("image/png"), "");
     }
   };
 
@@ -194,16 +195,37 @@ export const SketchCanvas = ({ onSave }: SketchCanvasProps) => {
     ctx.fillStyle = "#faf8f5";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     drawBlouseOutline(ctx, canvas.width, canvas.height);
-    onSave("");
+    onSave("", "");
   };
 
-  const downloadDesign = () => {
+  const generateDesignName = () => {
+    const timestamp = new Date().toISOString().slice(0, 10);
+    const sanitizedName = customerName
+      .trim()
+      .replace(/[^a-zA-Z0-9\s]/g, "")
+      .replace(/\s+/g, "_")
+      .toLowerCase();
+    
+    if (sanitizedName) {
+      return `${sanitizedName}_blouse_design_${timestamp}`;
+    }
+    return `blouse_design_${timestamp}`;
+  };
+
+  const saveDesign = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const designName = generateDesignName();
+    const dataUrl = canvas.toDataURL("image/png");
+    
+    // Save to parent component with design name
+    onSave(dataUrl, designName);
+
+    // Download the file
     const link = document.createElement("a");
-    link.download = "blouse-design.png";
-    link.href = canvas.toDataURL("image/png");
+    link.download = `${designName}.png`;
+    link.href = dataUrl;
     link.click();
   };
 
@@ -289,7 +311,7 @@ export const SketchCanvas = ({ onSave }: SketchCanvasProps) => {
           <RotateCcw className="h-4 w-4 mr-1" />
           Clear
         </Button>
-        <Button type="button" variant="outline" size="sm" onClick={downloadDesign}>
+        <Button type="button" variant="outline" size="sm" onClick={saveDesign}>
           <Download className="h-4 w-4 mr-1" />
           Save
         </Button>
