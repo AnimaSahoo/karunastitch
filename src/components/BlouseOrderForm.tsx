@@ -470,6 +470,83 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
+              {/* Blouse Options */}
+              <div className="border-b pb-6">
+                <h4 className="font-semibold text-foreground mb-4">Blouse Options</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Blouse Type */}
+                  <div>
+                    <Label className="mb-3 block">Blouse Type</Label>
+                    <RadioGroup
+                      value={formData.blouseType}
+                      onValueChange={(value) => handleInputChange("blouseType", value)}
+                      className="flex flex-col gap-2"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="princess-cut" id="princess-cut" />
+                        <Label htmlFor="princess-cut" className="cursor-pointer">Princess Cut</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="standard" id="standard" />
+                        <Label htmlFor="standard" className="cursor-pointer">Standard</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {/* Hook Position */}
+                  <div>
+                    <Label className="mb-3 block">Hook Position</Label>
+                    <RadioGroup
+                      value={formData.hookPosition}
+                      onValueChange={(value) => handleInputChange("hookPosition", value)}
+                      className="flex flex-col gap-2"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="front-hook" id="front-hook" />
+                        <Label htmlFor="front-hook" className="cursor-pointer">Front Hook</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="back-hook" id="back-hook" />
+                        <Label htmlFor="back-hook" className="cursor-pointer">Back Hook</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {/* Delivery Date */}
+                  <div>
+                    <Label className="mb-3 block">Delivery Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !formData.deliveryDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.deliveryDate ? (
+                            format(formData.deliveryDate, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-background" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.deliveryDate || undefined}
+                          onSelect={(date) => handleInputChange("deliveryDate", date as any)}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                          className="pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+              </div>
+
               {/* Front Measurements */}
               <div>
                 <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
@@ -586,83 +663,6 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                       placeholder="inches"
                       className="mt-1"
                     />
-                  </div>
-                </div>
-              </div>
-
-              {/* Blouse Options */}
-              <div className="border-t pt-6 mt-6">
-                <h4 className="font-semibold text-foreground mb-4">Blouse Options</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Blouse Type */}
-                  <div>
-                    <Label className="mb-3 block">Blouse Type</Label>
-                    <RadioGroup
-                      value={formData.blouseType}
-                      onValueChange={(value) => handleInputChange("blouseType", value)}
-                      className="flex flex-col gap-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="princess-cut" id="princess-cut" />
-                        <Label htmlFor="princess-cut" className="cursor-pointer">Princess Cut</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="standard" id="standard" />
-                        <Label htmlFor="standard" className="cursor-pointer">Standard</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  {/* Hook Position */}
-                  <div>
-                    <Label className="mb-3 block">Hook Position</Label>
-                    <RadioGroup
-                      value={formData.hookPosition}
-                      onValueChange={(value) => handleInputChange("hookPosition", value)}
-                      className="flex flex-col gap-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="front-hook" id="front-hook" />
-                        <Label htmlFor="front-hook" className="cursor-pointer">Front Hook</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="back-hook" id="back-hook" />
-                        <Label htmlFor="back-hook" className="cursor-pointer">Back Hook</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  {/* Delivery Date */}
-                  <div>
-                    <Label className="mb-3 block">Delivery Date</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !formData.deliveryDate && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {formData.deliveryDate ? (
-                            format(formData.deliveryDate, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 bg-background" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={formData.deliveryDate || undefined}
-                          onSelect={(date) => handleInputChange("deliveryDate", date as any)}
-                          disabled={(date) => date < new Date()}
-                          initialFocus
-                          className="pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
                   </div>
                 </div>
               </div>
