@@ -71,6 +71,18 @@ export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) =
     initCanvas(backCanvasRef.current, "back");
   }, []);
 
+  // Re-initialize canvas when switching tabs to ensure proper dimensions
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (activeView === "front") {
+        initCanvas(frontCanvasRef.current, "front");
+      } else {
+        initCanvas(backCanvasRef.current, "back");
+      }
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [activeView]);
+
   const initCanvas = (canvas: HTMLCanvasElement | null, view: "front" | "back") => {
     if (!canvas) return;
 
