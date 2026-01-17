@@ -34,6 +34,7 @@ import blouseCollar from "@/assets/blouse-collar.jpg";
 import blouseHighNeck from "@/assets/blouse-high-neck.jpg";
 import blouseBackless from "@/assets/blouse-backless.jpg";
 import blousePuffSleeve from "@/assets/blouse-puff-sleeve.jpg";
+import measurementGuide from "@/assets/measurement-guide.jpg";
 
 interface BlouseOrderFormProps {
   onSubmit?: () => void;
@@ -545,6 +546,21 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                     </Popover>
                   </div>
                 </div>
+              </div>
+
+              {/* Measurement Guide Image */}
+              <div className="border-b pb-6">
+                <h4 className="font-semibold text-foreground mb-3">Measurement Guide</h4>
+                <div className="flex justify-center">
+                  <img 
+                    src={measurementGuide} 
+                    alt="How to take blouse measurements" 
+                    className="max-w-md w-full rounded-lg border border-border shadow-sm"
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground text-center mt-3">
+                  Use a soft measuring tape and measure in inches. Keep the tape snug but not tight.
+                </p>
               </div>
 
               {/* Front Measurements */}
