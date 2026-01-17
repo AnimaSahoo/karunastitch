@@ -19,6 +19,16 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+// Import sample blouse images
+import blousePrincessCut from "@/assets/blouse-princess-cut.jpg";
+import blouseBoatNeck from "@/assets/blouse-boat-neck.jpg";
+import blouseSweetheart from "@/assets/blouse-sweetheart.jpg";
+import blouseHalter from "@/assets/blouse-halter.jpg";
+import blouseCollar from "@/assets/blouse-collar.jpg";
+import blouseHighNeck from "@/assets/blouse-high-neck.jpg";
+import blouseBackless from "@/assets/blouse-backless.jpg";
+import blousePuffSleeve from "@/assets/blouse-puff-sleeve.jpg";
+
 interface BlouseOrderFormProps {
   onSubmit?: () => void;
 }
@@ -53,14 +63,14 @@ interface FormData {
 }
 
 const sampleDesigns = [
-  { id: "princess", name: "Princess Cut", image: "👸", desc: "Deep V-neck" },
-  { id: "boat", name: "Boat Neck", image: "⛵", desc: "Wide horizontal" },
-  { id: "sweetheart", name: "Sweetheart", image: "💖", desc: "Heart-shaped" },
-  { id: "halter", name: "Halter Neck", image: "🎀", desc: "Ties at neck" },
-  { id: "collar", name: "Collar Neck", image: "👔", desc: "Shirt-style" },
-  { id: "high", name: "High Neck", image: "🔝", desc: "Full coverage" },
-  { id: "backless", name: "Backless", image: "✨", desc: "Open back" },
-  { id: "puff", name: "Puff Sleeve", image: "🎈", desc: "Voluminous" },
+  { id: "princess", name: "Princess Cut", image: blousePrincessCut, desc: "Deep V-neck" },
+  { id: "boat", name: "Boat Neck", image: blouseBoatNeck, desc: "Wide horizontal" },
+  { id: "sweetheart", name: "Sweetheart", image: blouseSweetheart, desc: "Heart-shaped" },
+  { id: "halter", name: "Halter Neck", image: blouseHalter, desc: "Ties at neck" },
+  { id: "collar", name: "Collar Neck", image: blouseCollar, desc: "Shirt-style" },
+  { id: "high", name: "High Neck", image: blouseHighNeck, desc: "Full coverage" },
+  { id: "backless", name: "Backless", image: blouseBackless, desc: "Open back" },
+  { id: "puff", name: "Puff Sleeve", image: blousePuffSleeve, desc: "Voluminous" },
 ];
 
 export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
@@ -353,13 +363,19 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                         key={design.id}
                         type="button"
                         onClick={() => setSelectedDesign(design.id)}
-                        className={`p-4 rounded-xl border-2 text-center transition-all ${
+                        className={`p-3 rounded-xl border-2 text-center transition-all ${
                           selectedDesign === design.id
                             ? "border-primary bg-primary/5 shadow-elegant"
                             : "border-border hover:border-primary/50"
                         }`}
                       >
-                        <span className="text-3xl block mb-2">{design.image}</span>
+                        <div className="aspect-[3/4] mb-2 overflow-hidden rounded-lg">
+                          <img 
+                            src={design.image} 
+                            alt={design.name}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform"
+                          />
+                        </div>
                         <span className="font-medium text-sm block">{design.name}</span>
                         <span className="text-xs text-muted-foreground">{design.desc}</span>
                         {selectedDesign === design.id && (
