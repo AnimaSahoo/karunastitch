@@ -34,12 +34,18 @@ interface FormData {
   state: string;
   zip: string;
   country: string;
-  // Measurements
-  bust: string;
-  blouseLength: string;
+  // Measurements - Front
   shoulder: string;
+  shoulderFullLength: string;
+  frontNeckDepth: string;
+  chest: string;
+  waist: string;
+  // Measurements - Back
+  backNeckDepth: string;
+  blouseLength: string;
   sleeveLength: string;
-  neckDepth: string;
+  sleeveAround: string;
+  armhole: string;
   // Options
   wantMeasurementHelp: boolean;
   isCustomItem: boolean;
@@ -67,11 +73,18 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     state: "",
     zip: "",
     country: "USA",
-    bust: "",
-    blouseLength: "",
+    // Front measurements
     shoulder: "",
+    shoulderFullLength: "",
+    frontNeckDepth: "",
+    chest: "",
+    waist: "",
+    // Back measurements
+    backNeckDepth: "",
+    blouseLength: "",
     sleeveLength: "",
-    neckDepth: "",
+    sleeveAround: "",
+    armhole: "",
     wantMeasurementHelp: false,
     isCustomItem: true,
     specialRequests: "",
@@ -427,57 +440,124 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                 Measurements (in inches)
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="bust">Bust</Label>
-                  <Input
-                    id="bust"
-                    value={formData.bust}
-                    onChange={(e) => handleInputChange("bust", e.target.value)}
-                    placeholder="inches"
-                    className="mt-1"
-                  />
+            <CardContent className="p-6 space-y-6">
+              {/* Front Measurements */}
+              <div>
+                <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <span className="bg-primary/10 text-primary px-2 py-1 rounded text-sm">Front</span>
+                  Blouse Front Measurements
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  <div>
+                    <Label htmlFor="shoulder">1. Shoulder</Label>
+                    <Input
+                      id="shoulder"
+                      value={formData.shoulder}
+                      onChange={(e) => handleInputChange("shoulder", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="shoulderFullLength">2. Shoulder Full Length</Label>
+                    <Input
+                      id="shoulderFullLength"
+                      value={formData.shoulderFullLength}
+                      onChange={(e) => handleInputChange("shoulderFullLength", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="frontNeckDepth">3. Front Neck Depth</Label>
+                    <Input
+                      id="frontNeckDepth"
+                      value={formData.frontNeckDepth}
+                      onChange={(e) => handleInputChange("frontNeckDepth", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="chest">4. Chest (around)</Label>
+                    <Input
+                      id="chest"
+                      value={formData.chest}
+                      onChange={(e) => handleInputChange("chest", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="waist">5. Waist (around)</Label>
+                    <Input
+                      id="waist"
+                      value={formData.waist}
+                      onChange={(e) => handleInputChange("waist", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="blouseLength">Blouse Length</Label>
-                  <Input
-                    id="blouseLength"
-                    value={formData.blouseLength}
-                    onChange={(e) => handleInputChange("blouseLength", e.target.value)}
-                    placeholder="inches"
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="shoulder">Shoulder</Label>
-                  <Input
-                    id="shoulder"
-                    value={formData.shoulder}
-                    onChange={(e) => handleInputChange("shoulder", e.target.value)}
-                    placeholder="inches"
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="sleeveLength">Sleeve Length</Label>
-                  <Input
-                    id="sleeveLength"
-                    value={formData.sleeveLength}
-                    onChange={(e) => handleInputChange("sleeveLength", e.target.value)}
-                    placeholder="inches"
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="neckDepth">Neck Depth</Label>
-                  <Input
-                    id="neckDepth"
-                    value={formData.neckDepth}
-                    onChange={(e) => handleInputChange("neckDepth", e.target.value)}
-                    placeholder="inches"
-                    className="mt-1"
-                  />
+              </div>
+
+              {/* Back Measurements */}
+              <div>
+                <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <span className="bg-secondary/50 text-secondary-foreground px-2 py-1 rounded text-sm">Back</span>
+                  Blouse Back Measurements
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  <div>
+                    <Label htmlFor="backNeckDepth">6. Back Neck Depth</Label>
+                    <Input
+                      id="backNeckDepth"
+                      value={formData.backNeckDepth}
+                      onChange={(e) => handleInputChange("backNeckDepth", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="blouseLength">7. Blouse Length</Label>
+                    <Input
+                      id="blouseLength"
+                      value={formData.blouseLength}
+                      onChange={(e) => handleInputChange("blouseLength", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="sleeveLength">8. Sleeve Length</Label>
+                    <Input
+                      id="sleeveLength"
+                      value={formData.sleeveLength}
+                      onChange={(e) => handleInputChange("sleeveLength", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="sleeveAround">9. Sleeve (around)</Label>
+                    <Input
+                      id="sleeveAround"
+                      value={formData.sleeveAround}
+                      onChange={(e) => handleInputChange("sleeveAround", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="armhole">10. Armhole (around)</Label>
+                    <Input
+                      id="armhole"
+                      value={formData.armhole}
+                      onChange={(e) => handleInputChange("armhole", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
               </div>
 
