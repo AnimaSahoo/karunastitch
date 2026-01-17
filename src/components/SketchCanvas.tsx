@@ -1,6 +1,7 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, DragEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Brush, Eraser, RotateCcw, Download, Circle, Square } from "lucide-react";
 
 interface SketchCanvasProps {
@@ -10,39 +11,82 @@ interface SketchCanvasProps {
 
 type Tool = "brush" | "eraser" | "rectangle" | "circle";
 
+interface BowType {
+  id: string;
+  name: string;
+  emoji: string;
+}
+
+const bowTypes: BowType[] = [
+  { id: "classic", name: "Classic Bow", emoji: "🎀" },
+  { id: "ribbon", name: "Ribbon Bow", emoji: "🎗️" },
+  { id: "butterfly", name: "Butterfly Bow", emoji: "🦋" },
+  { id: "rose", name: "Rose Bow", emoji: "🌹" },
+  { id: "knot", name: "Decorative Knot", emoji: "🪢" },
+  { id: "tassel", name: "Tassel", emoji: "🧶" },
+];
+
+interface DroppedBow {
+  id: string;
+  bowType: BowType;
+  x: number;
+  y: number;
+}
+
 export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const frontCanvasRef = useRef<HTMLCanvasElement>(null);
+  const backCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [activeView, setActiveView] = useState<"front" | "back">("front");
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentTool, setCurrentTool] = useState<Tool>("brush");
   const [brushColor, setBrushColor] = useState("#8B4513");
   const [brushSize, setBrushSize] = useState(3);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+  const [frontBows, setFrontBows] = useState<DroppedBow[]>([]);
+  const [backBows, setBackBows] = useState<DroppedBow[]>([]);
 
   const colors = [
     "#000000", "#8B4513", "#D4AF37", "#800020", "#1a365d",
     "#2d5016", "#4a1259", "#b91c1c", "#f97316", "#06b6d4"
   ];
 
+  const getCurrentCanvas = () => {
+    return activeView === "front" ? frontCanvasRef.current : backCanvasRef.current;
+  };
+
+  const getCurrentBows = () => {
+    return activeView === "front" ? frontBows : backBows;
+  };
+
+  const setCurrentBows = (bows: DroppedBow[]) => {
+    if (activeView === "front") {
+      setFrontBows(bows);
+    } else {
+      setBackBows(bows);
+    }
+  };
+
   useEffect(() => {
-    const canvas = canvasRef.current;
+    initCanvas(frontCanvasRef.current, "front");
+    initCanvas(backCanvasRef.current, "back");
+  }, []);
+
+  const initCanvas = (canvas: HTMLCanvasElement | null, view: "front" | "back") => {
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Set canvas size
     canvas.width = canvas.offsetWidth;
     canvas.height = 350;
 
-    // Fill with off-white background
     ctx.fillStyle = "#faf8f5";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw blouse outline
-    drawBlouseOutline(ctx, canvas.width, canvas.height);
-  }, []);
+    drawBlouseOutline(ctx, canvas.width, canvas.height, view);
+  };
 
-  const drawBlouseOutline = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+  const drawBlouseOutline = (ctx: CanvasRenderingContext2D, width: number, height: number, view: "front" | "back") => {
     const centerX = width / 2;
     const topY = 40;
     
@@ -52,9 +96,16 @@ export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) =
 
     ctx.beginPath();
     
-    // Neckline
-    ctx.moveTo(centerX - 80, topY + 30);
-    ctx.quadraticCurveTo(centerX, topY, centerX + 80, topY + 30);
+    // Neckline - different for front vs back
+    if (view === "front") {
+      // V-neck or deeper front
+      ctx.moveTo(centerX - 80, topY + 30);
+      ctx.quadraticCurveTo(centerX, topY + 50, centerX + 80, topY + 30);
+    } else {
+      // Shallower back neckline
+      ctx.moveTo(centerX - 80, topY + 30);
+      ctx.quadraticCurveTo(centerX, topY + 15, centerX + 80, topY + 30);
+    }
     
     // Right shoulder and sleeve
     ctx.lineTo(centerX + 120, topY + 40);
@@ -84,14 +135,14 @@ export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) =
     ctx.fillStyle = "#9ca3af";
     ctx.font = "11px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Neckline", centerX, topY + 20);
+    ctx.fillText(view === "front" ? "Front Neckline" : "Back Neckline", centerX, topY + (view === "front" ? 35 : 10));
     ctx.fillText("Sleeve", centerX + 145, topY + 95);
     ctx.fillText("Sleeve", centerX - 145, topY + 95);
-    ctx.fillText("Body", centerX, height - 100);
+    ctx.fillText(view === "front" ? "Front Body" : "Back Body", centerX, height - 100);
   };
 
   const getPosition = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
+    const canvas = getCurrentCanvas();
     if (!canvas) return { x: 0, y: 0 };
 
     const rect = canvas.getBoundingClientRect();
@@ -117,7 +168,7 @@ export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) =
     setIsDrawing(true);
 
     if (currentTool === "brush" || currentTool === "eraser") {
-      const canvas = canvasRef.current;
+      const canvas = getCurrentCanvas();
       const ctx = canvas?.getContext("2d");
       if (!ctx) return;
 
@@ -130,7 +181,7 @@ export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) =
     if (!isDrawing) return;
     e.preventDefault();
 
-    const canvas = canvasRef.current;
+    const canvas = getCurrentCanvas();
     const ctx = canvas?.getContext("2d");
     if (!ctx) return;
 
@@ -156,7 +207,7 @@ export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) =
     if (!isDrawing) return;
     e.preventDefault();
 
-    const canvas = canvasRef.current;
+    const canvas = getCurrentCanvas();
     const ctx = canvas?.getContext("2d");
     if (!ctx) return;
 
@@ -180,22 +231,29 @@ export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) =
     }
 
     setIsDrawing(false);
-    
-    // Auto-save after drawing (without name, just for preview)
-    if (canvas) {
-      onSave(canvas.toDataURL("image/png"), "");
+    autoSave();
+  };
+
+  const autoSave = () => {
+    const frontCanvas = frontCanvasRef.current;
+    const backCanvas = backCanvasRef.current;
+    if (frontCanvas && backCanvas) {
+      // Combine both canvases for save
+      const combinedDataUrl = frontCanvas.toDataURL("image/png");
+      onSave(combinedDataUrl, "");
     }
   };
 
   const clearCanvas = () => {
-    const canvas = canvasRef.current;
+    const canvas = getCurrentCanvas();
     const ctx = canvas?.getContext("2d");
     if (!ctx || !canvas) return;
 
     ctx.fillStyle = "#faf8f5";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    drawBlouseOutline(ctx, canvas.width, canvas.height);
-    onSave("", "");
+    drawBlouseOutline(ctx, canvas.width, canvas.height, activeView);
+    setCurrentBows([]);
+    autoSave();
   };
 
   const generateDesignName = () => {
@@ -213,24 +271,147 @@ export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) =
   };
 
   const saveDesign = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const frontCanvas = frontCanvasRef.current;
+    const backCanvas = backCanvasRef.current;
+    if (!frontCanvas || !backCanvas) return;
 
     const designName = generateDesignName();
-    const dataUrl = canvas.toDataURL("image/png");
     
-    // Save to parent component with design name
+    // Create combined canvas
+    const combinedCanvas = document.createElement("canvas");
+    combinedCanvas.width = frontCanvas.width * 2 + 20;
+    combinedCanvas.height = frontCanvas.height + 60;
+    const ctx = combinedCanvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.fillStyle = "#faf8f5";
+    ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+
+    // Labels
+    ctx.fillStyle = "#374151";
+    ctx.font = "bold 14px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("FRONT", frontCanvas.width / 2, 20);
+    ctx.fillText("BACK", frontCanvas.width + 10 + backCanvas.width / 2, 20);
+
+    // Draw canvases
+    ctx.drawImage(frontCanvas, 0, 30);
+    ctx.drawImage(backCanvas, frontCanvas.width + 20, 30);
+
+    // Draw bows on combined canvas
+    ctx.font = "24px sans-serif";
+    frontBows.forEach((bow) => {
+      ctx.fillText(bow.bowType.emoji, bow.x, bow.y + 30);
+    });
+    backBows.forEach((bow) => {
+      ctx.fillText(bow.bowType.emoji, bow.x + frontCanvas.width + 20, bow.y + 30);
+    });
+
+    const dataUrl = combinedCanvas.toDataURL("image/png");
     onSave(dataUrl, designName);
 
-    // Download the file
     const link = document.createElement("a");
     link.download = `${designName}.png`;
     link.href = dataUrl;
     link.click();
   };
 
+  const handleDragStart = (e: DragEvent<HTMLDivElement>, bow: BowType) => {
+    e.dataTransfer.setData("bowId", bow.id);
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const bowId = e.dataTransfer.getData("bowId");
+    const bow = bowTypes.find((b) => b.id === bowId);
+    if (!bow) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const newBow: DroppedBow = {
+      id: `${bow.id}-${Date.now()}`,
+      bowType: bow,
+      x,
+      y,
+    };
+
+    setCurrentBows([...getCurrentBows(), newBow]);
+    autoSave();
+  };
+
+  const removeBow = (bowId: string) => {
+    setCurrentBows(getCurrentBows().filter((b) => b.id !== bowId));
+    autoSave();
+  };
+
+  const renderCanvas = (view: "front" | "back") => {
+    const canvasRef = view === "front" ? frontCanvasRef : backCanvasRef;
+    const bows = view === "front" ? frontBows : backBows;
+
+    return (
+      <div
+        className="relative border-2 border-dashed border-border rounded-lg overflow-hidden bg-[#faf8f5]"
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
+        <canvas
+          ref={canvasRef}
+          className="w-full cursor-crosshair touch-none"
+          style={{ height: "350px" }}
+          onMouseDown={startDrawing}
+          onMouseMove={draw}
+          onMouseUp={stopDrawing}
+          onMouseLeave={stopDrawing}
+          onTouchStart={startDrawing}
+          onTouchMove={draw}
+          onTouchEnd={stopDrawing}
+        />
+        {/* Dropped bows overlay */}
+        {bows.map((bow) => (
+          <div
+            key={bow.id}
+            className="absolute cursor-pointer hover:scale-110 transition-transform group"
+            style={{ left: bow.x - 12, top: bow.y - 12 }}
+            onClick={() => removeBow(bow.id)}
+            title="Click to remove"
+          >
+            <span className="text-2xl">{bow.bowType.emoji}</span>
+            <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full w-4 h-4 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              ×
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-4">
+      {/* Bow Drag & Drop Panel */}
+      <div className="p-3 bg-accent/30 rounded-lg">
+        <p className="text-sm font-medium text-foreground mb-2">Drag & Drop Decorations</p>
+        <div className="flex flex-wrap gap-2">
+          {bowTypes.map((bow) => (
+            <div
+              key={bow.id}
+              draggable
+              onDragStart={(e) => handleDragStart(e, bow)}
+              className="flex items-center gap-1 px-3 py-2 bg-background rounded-lg border border-border cursor-grab hover:border-primary hover:shadow-sm transition-all active:cursor-grabbing"
+              title={bow.name}
+            >
+              <span className="text-xl">{bow.emoji}</span>
+              <span className="text-xs text-muted-foreground hidden sm:inline">{bow.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Tools Panel */}
       <div className="flex flex-wrap items-center gap-2 p-3 bg-muted/50 rounded-lg">
         <div className="flex gap-1">
@@ -317,24 +498,26 @@ export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) =
         </Button>
       </div>
 
-      {/* Canvas */}
-      <div className="border-2 border-dashed border-border rounded-lg overflow-hidden bg-[#faf8f5]">
-        <canvas
-          ref={canvasRef}
-          className="w-full cursor-crosshair touch-none"
-          style={{ height: "350px" }}
-          onMouseDown={startDrawing}
-          onMouseMove={draw}
-          onMouseUp={stopDrawing}
-          onMouseLeave={stopDrawing}
-          onTouchStart={startDrawing}
-          onTouchMove={draw}
-          onTouchEnd={stopDrawing}
-        />
-      </div>
+      {/* Front/Back Tabs */}
+      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as "front" | "back")} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="front" className="text-sm font-medium">
+            👕 Front View
+          </TabsTrigger>
+          <TabsTrigger value="back" className="text-sm font-medium">
+            🔙 Back View
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="front" className="mt-4">
+          {renderCanvas("front")}
+        </TabsContent>
+        <TabsContent value="back" className="mt-4">
+          {renderCanvas("back")}
+        </TabsContent>
+      </Tabs>
 
       <p className="text-xs text-muted-foreground text-center">
-        Draw your custom blouse design on the template above. Your sketch will be saved automatically.
+        Design both front and back of your blouse. Drag decorations onto the canvas or draw freehand. Click decorations to remove them.
       </p>
     </div>
   );
