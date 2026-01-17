@@ -400,7 +400,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
 
                 <TabsContent value="reference">
                   <p className="text-sm text-muted-foreground mb-4">
-                    Upload an inspiration image (Pinterest, Instagram, etc.)
+                    Upload an inspiration image (Pinterest, Instagram or your own sketch)
                   </p>
                   <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors">
                     <input
