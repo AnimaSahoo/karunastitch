@@ -339,8 +339,8 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
               <Tabs value={activeDesignTab} onValueChange={setActiveDesignTab}>
                 <TabsList className="grid w-full grid-cols-3 mb-6">
                   <TabsTrigger value="sample">Sample Designs</TabsTrigger>
-                  <TabsTrigger value="reference">Upload Reference</TabsTrigger>
                   <TabsTrigger value="sketch">Sketch Design</TabsTrigger>
+                  <TabsTrigger value="reference">Upload Reference</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="sample">
@@ -367,6 +367,34 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                         )}
                       </button>
                     ))}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="sketch">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Draw your custom blouse design on the canvas below
+                  </p>
+                  <div className="space-y-4">
+                    <SketchCanvas 
+                      customerName={formData.fullName}
+                      onSave={(dataUrl, designName) => {
+                        setSketchData(dataUrl);
+                        if (designName) {
+                          console.log(`Design saved: ${designName}`);
+                        }
+                      }} 
+                    />
+                    <div>
+                      <Label htmlFor="designDesc">Additional Notes (Optional)</Label>
+                      <Textarea
+                        id="designDesc"
+                        value={designDescription}
+                        onChange={(e) => setDesignDescription(e.target.value)}
+                        placeholder="Add any details about neckline, sleeves, back design, embroidery patterns..."
+                        className="mt-1"
+                        rows={3}
+                      />
+                    </div>
                   </div>
                 </TabsContent>
 
@@ -399,34 +427,6 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                       />
                     </div>
                   )}
-                </TabsContent>
-
-                <TabsContent value="sketch">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Draw your custom blouse design on the canvas below
-                  </p>
-                  <div className="space-y-4">
-                    <SketchCanvas 
-                      customerName={formData.fullName}
-                      onSave={(dataUrl, designName) => {
-                        setSketchData(dataUrl);
-                        if (designName) {
-                          console.log(`Design saved: ${designName}`);
-                        }
-                      }} 
-                    />
-                    <div>
-                      <Label htmlFor="designDesc">Additional Notes (Optional)</Label>
-                      <Textarea
-                        id="designDesc"
-                        value={designDescription}
-                        onChange={(e) => setDesignDescription(e.target.value)}
-                        placeholder="Add any details about neckline, sleeves, back design, embroidery patterns..."
-                        className="mt-1"
-                        rows={3}
-                      />
-                    </div>
-                  </div>
                 </TabsContent>
               </Tabs>
             </CardContent>
