@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles } from "lucide-react";
+import logo from "@/assets/blouse-beyond-logo.png";
 
 interface HeroSectionProps {
   onDesignClick: () => void;
@@ -7,17 +8,39 @@ interface HeroSectionProps {
 
 export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
   return (
-    <section className="relative min-h-[90vh] flex items-center bg-gradient-to-br from-cream via-warm-white to-secondary overflow-hidden">
+    <section className="relative min-h-[90vh] flex flex-col bg-gradient-to-br from-cream via-warm-white to-secondary overflow-hidden">
+      {/* Header/Navigation */}
+      <header className="w-full py-4 px-6 flex items-center justify-between relative z-20">
+        <div className="flex items-center gap-3">
+          <img src={logo} alt="Blouse & Beyond" className="h-12 w-auto" />
+          <span className="text-xl font-semibold text-foreground hidden sm:inline">
+            <span className="text-primary">Blouse</span>
+            <span className="text-accent"> & </span>
+            <span>Beyond</span>
+          </span>
+        </div>
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
+          <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
+          <a href="#design" className="hover:text-primary transition-colors">Design</a>
+          <a href="#impact" className="hover:text-primary transition-colors">Our Impact</a>
+        </nav>
+      </header>
+
       {/* Decorative elements */}
       <div className="absolute top-20 left-10 w-32 h-32 bg-accent/20 rounded-full blur-3xl" />
       <div className="absolute bottom-20 right-10 w-48 h-48 bg-primary/10 rounded-full blur-3xl" />
       
-      <div className="container mx-auto px-4 py-16 relative z-10">
+      <div className="container mx-auto px-4 py-16 relative z-10 flex-1 flex items-center">
         <div className="max-w-4xl mx-auto text-center">
           {/* Brand Badge */}
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in">
             <Sparkles className="h-4 w-4" />
             Empowering Women Artisans in Odisha
+          </div>
+
+          {/* Logo in Hero */}
+          <div className="flex justify-center mb-6">
+            <img src={logo} alt="Blouse & Beyond" className="h-24 md:h-32 w-auto" />
           </div>
           
           {/* Brand Name */}
