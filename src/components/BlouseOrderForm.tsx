@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -86,6 +87,7 @@ const sampleDesigns = [
 ];
 
 export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
@@ -169,8 +171,30 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
       return;
     }
 
-    toast.success("Order placed successfully! We'll contact you soon.");
+    // Create order object
+    const orderId = `BB-${Date.now().toString(36).toUpperCase()}`;
+    const orderData = {
+      id: orderId,
+      orderDate: new Date().toLocaleDateString(),
+      ...formData,
+      deliveryDate: formData.deliveryDate ? format(formData.deliveryDate, "PPP") : "",
+      selectedDesign: selectedDesign || (referenceImage ? "Reference Image" : "Custom Sketch"),
+      designDescription,
+    };
+
+    // Save to localStorage (append to existing orders)
+    const existingOrders = JSON.parse(localStorage.getItem("blouseOrders") || "[]");
+    existingOrders.push(orderData);
+    localStorage.setItem("blouseOrders", JSON.stringify(existingOrders));
+
+    // Save current order to sessionStorage for checkout page
+    sessionStorage.setItem("currentOrder", JSON.stringify(orderData));
+
+    toast.success("Order placed successfully!");
     onSubmit?.();
+    
+    // Navigate to checkout page
+    navigate("/checkout");
   };
 
   return (
