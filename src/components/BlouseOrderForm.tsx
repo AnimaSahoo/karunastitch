@@ -51,18 +51,20 @@ interface FormData {
   state: string;
   zip: string;
   country: string;
-  // Measurements - Front
-  shoulder: string;
-  shoulderFullLength: string;
-  frontNeckDepth: string;
-  chest: string;
-  waist: string;
-  // Measurements - Back
-  backNeckDepth: string;
-  blouseLength: string;
-  sleeveLength: string;
-  sleeveAround: string;
-  armhole: string;
+  // Measurements (matching guide image 1-13)
+  blouseBackLength: string;      // 1
+  fullShoulder: string;          // 2
+  shoulderStrap: string;         // 3
+  backNeckDepth: string;         // 4
+  frontNeckDepth: string;        // 5
+  shoulderToApex: string;        // 6
+  frontLength: string;           // 7
+  chest: string;                 // 8
+  waist: string;                 // 9
+  sleeveLength: string;          // 10
+  armRound: string;              // 11
+  sleeveRound: string;           // 12
+  armHole: string;               // 13
   // Options
   blouseType: "princess-cut" | "standard";
   hookPosition: "front-hook" | "back-hook";
@@ -93,18 +95,20 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     state: "",
     zip: "",
     country: "USA",
-    // Front measurements
-    shoulder: "",
-    shoulderFullLength: "",
+    // Measurements (1-13)
+    blouseBackLength: "",
+    fullShoulder: "",
+    shoulderStrap: "",
+    backNeckDepth: "",
     frontNeckDepth: "",
+    shoulderToApex: "",
+    frontLength: "",
     chest: "",
     waist: "",
-    // Back measurements
-    backNeckDepth: "",
-    blouseLength: "",
     sleeveLength: "",
-    sleeveAround: "",
-    armhole: "",
+    armRound: "",
+    sleeveRound: "",
+    armHole: "",
     // Options
     blouseType: "standard",
     hookPosition: "back-hook",
@@ -563,75 +567,42 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                 </p>
               </div>
 
-              {/* Front Measurements */}
+              {/* All Measurements - matching guide image 1-13 */}
               <div>
-                <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <span className="bg-primary/10 text-primary px-2 py-1 rounded text-sm">Front</span>
-                  Blouse Front Measurements
-                </h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <h4 className="font-semibold text-foreground mb-4">Enter Your Measurements</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   <div>
-                    <Label htmlFor="shoulder">1. Shoulder</Label>
+                    <Label htmlFor="blouseBackLength">1. Blouse Back Length</Label>
                     <Input
-                      id="shoulder"
-                      value={formData.shoulder}
-                      onChange={(e) => handleInputChange("shoulder", e.target.value)}
+                      id="blouseBackLength"
+                      value={formData.blouseBackLength}
+                      onChange={(e) => handleInputChange("blouseBackLength", e.target.value)}
                       placeholder="inches"
                       className="mt-1"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="shoulderFullLength">2. Shoulder Full Length</Label>
+                    <Label htmlFor="fullShoulder">2. Full Shoulder</Label>
                     <Input
-                      id="shoulderFullLength"
-                      value={formData.shoulderFullLength}
-                      onChange={(e) => handleInputChange("shoulderFullLength", e.target.value)}
+                      id="fullShoulder"
+                      value={formData.fullShoulder}
+                      onChange={(e) => handleInputChange("fullShoulder", e.target.value)}
                       placeholder="inches"
                       className="mt-1"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="frontNeckDepth">3. Front Neck Depth</Label>
+                    <Label htmlFor="shoulderStrap">3. Shoulder Strap</Label>
                     <Input
-                      id="frontNeckDepth"
-                      value={formData.frontNeckDepth}
-                      onChange={(e) => handleInputChange("frontNeckDepth", e.target.value)}
+                      id="shoulderStrap"
+                      value={formData.shoulderStrap}
+                      onChange={(e) => handleInputChange("shoulderStrap", e.target.value)}
                       placeholder="inches"
                       className="mt-1"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="chest">4. Chest (around)</Label>
-                    <Input
-                      id="chest"
-                      value={formData.chest}
-                      onChange={(e) => handleInputChange("chest", e.target.value)}
-                      placeholder="inches"
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="waist">5. Waist (around)</Label>
-                    <Input
-                      id="waist"
-                      value={formData.waist}
-                      onChange={(e) => handleInputChange("waist", e.target.value)}
-                      placeholder="inches"
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Back Measurements */}
-              <div>
-                <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <span className="bg-secondary/50 text-secondary-foreground px-2 py-1 rounded text-sm">Back</span>
-                  Blouse Back Measurements
-                </h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                  <div>
-                    <Label htmlFor="backNeckDepth">6. Back Neck Depth</Label>
+                    <Label htmlFor="backNeckDepth">4. Back Neck Depth</Label>
                     <Input
                       id="backNeckDepth"
                       value={formData.backNeckDepth}
@@ -641,17 +612,57 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="blouseLength">7. Blouse Length</Label>
+                    <Label htmlFor="frontNeckDepth">5. Front Neck Depth</Label>
                     <Input
-                      id="blouseLength"
-                      value={formData.blouseLength}
-                      onChange={(e) => handleInputChange("blouseLength", e.target.value)}
+                      id="frontNeckDepth"
+                      value={formData.frontNeckDepth}
+                      onChange={(e) => handleInputChange("frontNeckDepth", e.target.value)}
                       placeholder="inches"
                       className="mt-1"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="sleeveLength">8. Sleeve Length</Label>
+                    <Label htmlFor="shoulderToApex">6. Shoulder to Apex</Label>
+                    <Input
+                      id="shoulderToApex"
+                      value={formData.shoulderToApex}
+                      onChange={(e) => handleInputChange("shoulderToApex", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="frontLength">7. Front Length</Label>
+                    <Input
+                      id="frontLength"
+                      value={formData.frontLength}
+                      onChange={(e) => handleInputChange("frontLength", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="chest">8. Chest (around)</Label>
+                    <Input
+                      id="chest"
+                      value={formData.chest}
+                      onChange={(e) => handleInputChange("chest", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="waist">9. Waist (around)</Label>
+                    <Input
+                      id="waist"
+                      value={formData.waist}
+                      onChange={(e) => handleInputChange("waist", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="sleeveLength">10. Sleeve Length</Label>
                     <Input
                       id="sleeveLength"
                       value={formData.sleeveLength}
@@ -661,21 +672,31 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="sleeveAround">9. Sleeve (around)</Label>
+                    <Label htmlFor="armRound">11. Arm Round</Label>
                     <Input
-                      id="sleeveAround"
-                      value={formData.sleeveAround}
-                      onChange={(e) => handleInputChange("sleeveAround", e.target.value)}
+                      id="armRound"
+                      value={formData.armRound}
+                      onChange={(e) => handleInputChange("armRound", e.target.value)}
                       placeholder="inches"
                       className="mt-1"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="armhole">10. Armhole (around)</Label>
+                    <Label htmlFor="sleeveRound">12. Sleeve Round</Label>
                     <Input
-                      id="armhole"
-                      value={formData.armhole}
-                      onChange={(e) => handleInputChange("armhole", e.target.value)}
+                      id="sleeveRound"
+                      value={formData.sleeveRound}
+                      onChange={(e) => handleInputChange("sleeveRound", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="armHole">13. Arm Hole</Label>
+                    <Input
+                      id="armHole"
+                      value={formData.armHole}
+                      onChange={(e) => handleInputChange("armHole", e.target.value)}
                       placeholder="inches"
                       className="mt-1"
                     />
