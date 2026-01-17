@@ -30,11 +30,11 @@ export const Footer = () => {
                 hello@blouseandbeyond.com
               </a>
               <a 
-                href="tel:+1234567890" 
+                href="tel:+15103810843" 
                 className="flex items-center gap-2 hover:text-accent transition-colors"
               >
                 <Phone className="h-4 w-4" />
-                +1 (234) 567-890
+                +1 (510) 381-0843
               </a>
               <a 
                 href="https://instagram.com/blouseandbeyond" 
