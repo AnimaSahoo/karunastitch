@@ -8,43 +8,45 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 32 20% 97%;
-    --foreground: 340 20% 15%;
+    --background: 35 25% 94%;
+    --foreground: 30 25% 18%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 340 20% 15%;
+    --card: 38 30% 96%;
+    --card-foreground: 30 25% 18%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 340 20% 15%;
+    --popover: 38 30% 96%;
+    --popover-foreground: 30 25% 18%;
 
-    --primary: 340 65% 35%;
-    --primary-foreground: 32 20% 97%;
+    --primary: 28 50% 35%;
+    --primary-foreground: 38 30% 96%;
 
-    --secondary: 32 40% 85%;
-    --secondary-foreground: 340 20% 15%;
+    --secondary: 35 35% 88%;
+    --secondary-foreground: 30 25% 18%;
 
-    --muted: 32 30% 90%;
-    --muted-foreground: 340 15% 45%;
+    --muted: 35 25% 90%;
+    --muted-foreground: 30 20% 40%;
 
-    --accent: 45 85% 55%;
-    --accent-foreground: 340 20% 15%;
+    --accent: 32 55% 45%;
+    --accent-foreground: 38 30% 96%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 32 25% 85%;
-    --input: 32 25% 90%;
-    --ring: 340 65% 35%;
+    --border: 35 30% 80%;
+    --input: 35 30% 88%;
+    --ring: 28 50% 35%;
 
-    /* Indian-inspired design tokens */
-    --royal-red: 340 65% 35%;
-    --royal-red-light: 340 45% 65%;
-    --gold: 45 85% 55%;
-    --gold-light: 45 70% 75%;
-    --emerald: 160 50% 35%;
-    --emerald-light: 160 40% 65%;
-    --cream: 32 40% 95%;
-    --warm-white: 32 20% 97%;
+    /* Indian-inspired design tokens - warm cream/beige/brown palette */
+    --royal-red: 28 50% 35%;
+    --royal-red-light: 30 40% 55%;
+    --gold: 32 55% 45%;
+    --gold-light: 35 50% 65%;
+    --emerald: 160 40% 35%;
+    --emerald-light: 160 35% 60%;
+    --cream: 38 35% 92%;
+    --warm-white: 35 25% 94%;
+    --tan: 30 35% 50%;
+    --beige: 35 30% 85%;
     
     /* Gradients */
     --gradient-royal: linear-gradient(135deg, hsl(var(--royal-red)), hsl(var(--royal-red-light)));
@@ -52,8 +54,8 @@ All colors MUST be HSL.
     --gradient-elegant: linear-gradient(135deg, hsl(var(--royal-red)) 0%, hsl(var(--gold)) 100%);
     
     /* Shadows */
-    --shadow-elegant: 0 10px 30px -10px hsl(var(--royal-red) / 0.3);
-    --shadow-gold: 0 5px 20px -5px hsl(var(--gold) / 0.4);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--royal-red) / 0.25);
+    --shadow-gold: 0 5px 20px -5px hsl(var(--gold) / 0.35);
 
     --radius: 0.5rem;
 
