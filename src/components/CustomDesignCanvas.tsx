@@ -28,7 +28,6 @@ const popularDesigns: PopularDesign[] = [
   { id: "halter-neck", name: "Halter Neck", description: "Ties behind the neck", emoji: "🎀" },
   { id: "collar-neck", name: "Collar Neck", description: "Shirt-style collar", emoji: "👔" },
   { id: "high-neck", name: "High Neck", description: "Full coverage neckline", emoji: "🔝" },
-  { id: "backless", name: "Backless", description: "Open back design", emoji: "✨" },
   { id: "puff-sleeve", name: "Puff Sleeve", description: "Voluminous sleeves", emoji: "🎈" },
 ];
 
