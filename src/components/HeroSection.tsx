@@ -11,8 +11,10 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
     <section className="relative min-h-[90vh] flex flex-col bg-gradient-to-br from-cream via-warm-white to-secondary overflow-hidden">
       {/* Header/Navigation */}
       <header className="w-full py-4 px-6 flex items-center justify-between relative z-20">
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="Karuna Stitch" className="h-12 w-auto" />
+         <div className="flex items-center gap-3">
+           <div className="bg-warm-white px-3 py-1 rounded-lg">
+             <img src={logo} alt="Karuna Stitch" className="h-12 w-auto" />
+           </div>
           <span className="text-xl font-semibold text-foreground hidden sm:inline">
             <span className="text-primary">Karuna</span>
             <span className="text-accent"> </span>
@@ -39,7 +41,7 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           </div>
 
           {/* Logo in Hero */}
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-6 bg-warm-white px-4 py-2 rounded-2xl">
             <img src={logo} alt="Karuna Stitch" className="h-24 md:h-32 w-auto" />
           </div>
           
