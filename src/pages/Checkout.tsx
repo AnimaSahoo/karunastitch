@@ -33,6 +33,7 @@ interface OrderData {
   blouseType: string;
   hookPosition: string;
   deliveryDate: string;
+  extraClothsLaces: string;
   selectedDesign: string;
   designDescription: string;
   specialRequests: string;
@@ -93,6 +94,7 @@ const Checkout = () => {
       "Blouse Type": order.blouseType,
       "Hook Position": order.hookPosition,
       "Delivery Date": order.deliveryDate,
+      "Extra Cloths/Laces": order.extraClothsLaces || "No",
       "Selected Design": order.selectedDesign,
       "Design Description": order.designDescription,
       "Special Requests": order.specialRequests,

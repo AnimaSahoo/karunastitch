@@ -70,6 +70,7 @@ interface FormData {
   blouseType: "princess-cut" | "standard";
   hookPosition: "front-hook" | "back-hook";
   deliveryDate: Date | null;
+  extraClothsLaces: "yes" | "no";
   wantMeasurementHelp: boolean;
   isCustomItem: boolean;
   specialRequests: string;
@@ -115,6 +116,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     blouseType: "standard",
     hookPosition: "back-hook",
     deliveryDate: null,
+    extraClothsLaces: "no",
     wantMeasurementHelp: false,
     isCustomItem: true,
     specialRequests: "",
@@ -726,6 +728,25 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Extra Cloths/Laces Option */}
+              <div className="pt-4 border-t">
+                <Label className="mb-3 block font-semibold">Extra Cloths/Laces Needed?</Label>
+                <RadioGroup
+                  value={formData.extraClothsLaces}
+                  onValueChange={(value) => handleInputChange("extraClothsLaces", value)}
+                  className="flex gap-6"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="extra-yes" />
+                    <Label htmlFor="extra-yes" className="cursor-pointer">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="extra-no" />
+                    <Label htmlFor="extra-no" className="cursor-pointer">No</Label>
+                  </div>
+                </RadioGroup>
               </div>
 
               <div className="flex items-center space-x-2 pt-4">
