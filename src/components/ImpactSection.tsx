@@ -30,7 +30,7 @@ export const ImpactSection = () => {
                 </h3>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    Blouse & Beyond partners with skilled differently-abled women artisans 
+                    Karuna Stitch partners with skilled differently-abled women artisans 
                     in Odisha, India, providing them with dignified work and sustainable income.
                   </p>
                   <p>

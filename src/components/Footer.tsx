@@ -8,9 +8,9 @@ export const Footer = () => {
           {/* Brand */}
           <div>
             <h3 className="text-2xl font-bold mb-4">
-              <span className="text-primary-foreground">Blouse</span>
-              <span className="text-accent"> & </span>
-              <span>Beyond</span>
+              <span className="text-primary-foreground">Karuna</span>
+              <span className="text-accent"> </span>
+              <span>Stitch</span>
             </h3>
             <p className="text-muted opacity-80 text-sm leading-relaxed">
               Custom saree blouses stitched with dignity & care. 
@@ -23,11 +23,11 @@ export const Footer = () => {
             <h4 className="font-semibold mb-4">Contact Us</h4>
             <div className="space-y-3 text-sm">
               <a 
-                href="mailto:hello@blouseandbeyond.com" 
+                href="mailto:hello@karunastitch.com" 
                 className="flex items-center gap-2 hover:text-accent transition-colors"
               >
                 <Mail className="h-4 w-4" />
-                hello@blouseandbeyond.com
+                hello@karunastitch.com
               </a>
               <a 
                 href="tel:+15103810843" 
@@ -37,13 +37,13 @@ export const Footer = () => {
                 +1 (510) 381-0843
               </a>
               <a 
-                href="https://instagram.com/blouseandbeyond" 
+                href="https://instagram.com/karunastitch" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 hover:text-accent transition-colors"
               >
                 <Instagram className="h-4 w-4" />
-                @blouseandbeyond
+                @karunastitch
               </a>
             </div>
           </div>
@@ -74,7 +74,7 @@ export const Footer = () => {
             Made with <Heart className="h-4 w-4 text-primary" /> in India & USA
           </p>
           <p className="mt-2 opacity-60">
-            © {new Date().getFullYear()} Blouse & Beyond. All rights reserved.
+            © {new Date().getFullYear()} Karuna Stitch. All rights reserved.
           </p>
         </div>
       </div>

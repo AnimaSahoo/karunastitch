@@ -12,11 +12,11 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
       {/* Header/Navigation */}
       <header className="w-full py-4 px-6 flex items-center justify-between relative z-20">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="Blouse & Beyond" className="h-12 w-auto" />
+          <img src={logo} alt="Karuna Stitch" className="h-12 w-auto" />
           <span className="text-xl font-semibold text-foreground hidden sm:inline">
-            <span className="text-primary">Blouse</span>
-            <span className="text-accent"> & </span>
-            <span>Beyond</span>
+            <span className="text-primary">Karuna</span>
+            <span className="text-accent"> </span>
+            <span>Stitch</span>
           </span>
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
@@ -40,14 +40,14 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
 
           {/* Logo in Hero */}
           <div className="flex justify-center mb-6">
-            <img src={logo} alt="Blouse & Beyond" className="h-24 md:h-32 w-auto" />
+            <img src={logo} alt="Karuna Stitch" className="h-24 md:h-32 w-auto" />
           </div>
           
           {/* Brand Name */}
           <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tight">
-            <span className="text-primary">Blouse</span>
-            <span className="text-accent"> & </span>
-            <span className="text-foreground">Beyond</span>
+            <span className="text-primary">Karuna</span>
+            <span className="text-accent"> </span>
+            <span className="text-foreground">Stitch</span>
           </h1>
           
           {/* Tagline */}

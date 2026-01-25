@@ -111,7 +111,7 @@ const Checkout = () => {
     worksheet["!cols"] = colWidths;
 
     // Generate and download file
-    const fileName = `BlouseBeyond_AllOrders_${new Date().toISOString().split("T")[0]}.xlsx`;
+    const fileName = `KarunaStitch_AllOrders_${new Date().toISOString().split("T")[0]}.xlsx`;
     XLSX.writeFile(workbook, fileName);
     toast.success("Excel file downloaded successfully!");
   };
