@@ -377,6 +377,25 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                   ))}
                 </div>
               )}
+
+              {/* Extra Cloths/Laces Option */}
+              <div className="pt-4 border-t mt-4">
+                <Label className="mb-3 block font-semibold">Extra Cloths/Laces Needed?</Label>
+                <RadioGroup
+                  value={formData.extraClothsLaces}
+                  onValueChange={(value) => handleInputChange("extraClothsLaces", value)}
+                  className="flex gap-6"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="extra-yes" />
+                    <Label htmlFor="extra-yes" className="cursor-pointer">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="extra-no" />
+                    <Label htmlFor="extra-no" className="cursor-pointer">No</Label>
+                  </div>
+                </RadioGroup>
+              </div>
             </CardContent>
           </Card>
 
@@ -729,24 +748,6 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                 </div>
               </div>
 
-              {/* Extra Cloths/Laces Option */}
-              <div className="pt-4 border-t">
-                <Label className="mb-3 block font-semibold">Extra Cloths/Laces Needed?</Label>
-                <RadioGroup
-                  value={formData.extraClothsLaces}
-                  onValueChange={(value) => handleInputChange("extraClothsLaces", value)}
-                  className="flex gap-6"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="extra-yes" />
-                    <Label htmlFor="extra-yes" className="cursor-pointer">Yes</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="extra-no" />
-                    <Label htmlFor="extra-no" className="cursor-pointer">No</Label>
-                  </div>
-                </RadioGroup>
-              </div>
 
               <div className="flex items-center space-x-2 pt-4">
                 <Checkbox
