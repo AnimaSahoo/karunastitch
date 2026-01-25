@@ -27,14 +27,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 // Import sample blouse images
-import blousePrincessCut from "@/assets/blouse-princess-cut.jpg";
 import blouseBoatNeck from "@/assets/blouse-boat-neck.jpg";
-import blouseSweetheart from "@/assets/blouse-sweetheart.jpg";
-import blouseHalter from "@/assets/blouse-halter.jpg";
 import blouseCollar from "@/assets/blouse-collar.jpg";
-import blouseHighNeck from "@/assets/blouse-high-neck.jpg";
-
-import blousePuffSleeve from "@/assets/blouse-puff-sleeve.jpg";
 import measurementGuide from "@/assets/measurement-guide.jpg";
 
 interface BlouseOrderFormProps {
@@ -77,13 +71,9 @@ interface FormData {
 }
 
 const sampleDesigns = [
-  { id: "princess", name: "Princess Cut", image: blousePrincessCut, desc: "Deep V-neck" },
-  { id: "boat", name: "Boat Neck", image: blouseBoatNeck, desc: "Wide horizontal" },
-  { id: "sweetheart", name: "Sweetheart", image: blouseSweetheart, desc: "Heart-shaped" },
-  { id: "halter", name: "Halter Neck", image: blouseHalter, desc: "Ties at neck" },
   { id: "collar", name: "Collar Neck", image: blouseCollar, desc: "Shirt-style" },
-  { id: "high", name: "High Neck", image: blouseHighNeck, desc: "Full coverage" },
-  { id: "puff", name: "Puff Sleeve", image: blousePuffSleeve, desc: "Voluminous" },
+  { id: "boat", name: "Boat Neck", image: blouseBoatNeck, desc: "Wide horizontal" },
+  { id: "bow", name: "With a Bow", image: null, desc: "Coming soon" },
 ];
 
 export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
@@ -431,12 +421,19 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                             : "border-border hover:border-primary/50"
                         }`}
                       >
-                        <div className="aspect-[3/4] mb-2 overflow-hidden rounded-lg">
-                          <img 
-                            src={design.image} 
-                            alt={design.name}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform"
-                          />
+                        <div className="aspect-[3/4] mb-2 overflow-hidden rounded-lg bg-muted flex items-center justify-center">
+                          {design.image ? (
+                            <img 
+                              src={design.image} 
+                              alt={design.name}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform"
+                            />
+                          ) : (
+                            <div className="text-muted-foreground text-center p-4">
+                              <ImageIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                              <span className="text-xs">Image coming soon</span>
+                            </div>
+                          )}
                         </div>
                         <span className="font-medium text-sm block">{design.name}</span>
                         <span className="text-xs text-muted-foreground">{design.desc}</span>
