@@ -33,7 +33,7 @@ import blouseSweetheart from "@/assets/blouse-sweetheart.jpg";
 import blouseHalter from "@/assets/blouse-halter.jpg";
 import blouseCollar from "@/assets/blouse-collar.jpg";
 import blouseHighNeck from "@/assets/blouse-high-neck.jpg";
-import blouseBackless from "@/assets/blouse-backless.jpg";
+
 import blousePuffSleeve from "@/assets/blouse-puff-sleeve.jpg";
 import measurementGuide from "@/assets/measurement-guide.jpg";
 
@@ -83,7 +83,6 @@ const sampleDesigns = [
   { id: "halter", name: "Halter Neck", image: blouseHalter, desc: "Ties at neck" },
   { id: "collar", name: "Collar Neck", image: blouseCollar, desc: "Shirt-style" },
   { id: "high", name: "High Neck", image: blouseHighNeck, desc: "Full coverage" },
-  { id: "backless", name: "Backless", image: blouseBackless, desc: "Open back" },
   { id: "puff", name: "Puff Sleeve", image: blousePuffSleeve, desc: "Voluminous" },
 ];
 
