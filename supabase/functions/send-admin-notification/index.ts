@@ -6,17 +6,71 @@ const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const ADMIN_EMAIL = "sahoo.anima@gmail.com";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+// Restrict CORS to specific origins
+const ALLOWED_ORIGINS = [
+  "https://karunastitch.lovable.app",
+  "https://id-preview--e7110f26-cf0c-4df5-a583-684879d574f9.lovable.app"
+];
+
+const getCorsHeaders = (origin: string | null) => {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.some(o => origin.startsWith(o.replace("https://", "https://")) || origin.includes("lovable.app"))
+    ? origin
+    : ALLOWED_ORIGINS[0];
+  
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Credentials": "true",
+  };
 };
 
 interface AdminNotificationRequest {
   orderId: string;
 }
 
+// Rate limit: max 1 email per order per minute
+const checkRateLimit = async (
+  supabase: ReturnType<typeof createClient>,
+  orderId: string,
+  functionName: string
+): Promise<{ allowed: boolean; error?: string }> => {
+  const oneMinuteAgo = new Date(Date.now() - 60000).toISOString();
+  
+  const { data, error } = await supabase
+    .from("email_sends")
+    .select("id")
+    .eq("order_id", orderId)
+    .eq("function_name", functionName)
+    .gte("sent_at", oneMinuteAgo)
+    .limit(1);
+
+  if (error) {
+    console.error("Rate limit check error:", error);
+    // Allow on error to not block legitimate requests
+    return { allowed: true };
+  }
+
+  if (data && data.length > 0) {
+    return { allowed: false, error: "Notification already sent recently. Please wait before retrying." };
+  }
+
+  return { allowed: true };
+};
+
+const logEmailSend = async (
+  supabase: ReturnType<typeof createClient>,
+  orderId: string,
+  functionName: string
+) => {
+  await supabase
+    .from("email_sends")
+    .insert({ order_id: orderId, function_name: functionName });
+};
+
 const handler = async (req: Request): Promise<Response> => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -38,6 +92,15 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
+
+    // Check rate limit before proceeding
+    const rateLimitResult = await checkRateLimit(supabase, orderId, "send-admin-notification");
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({ success: false, error: rateLimitResult.error }),
+        { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     // Fetch order from database
     const { data: order, error: orderError } = await supabase
@@ -221,6 +284,9 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
+    // Log successful email send for rate limiting
+    await logEmailSend(supabase, orderId, "send-admin-notification");
+
     console.log("Admin notification email sent successfully:", emailResponse);
 
     return new Response(JSON.stringify({ success: true, data: emailResponse }), {
@@ -237,7 +303,7 @@ const handler = async (req: Request): Promise<Response> => {
       JSON.stringify({ success: false, error: errorMessage }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
+        headers: { "Content-Type": "application/json", ...getCorsHeaders(null) },
       }
     );
   }
