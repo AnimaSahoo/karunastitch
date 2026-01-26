@@ -1,0 +1,2 @@
+-- Add policy to allow anyone to select their just-inserted order (needed for .select().single() to work)
+CREATE POLICY "Anyone can view orders" ON public.orders AS PERMISSIVE FOR SELECT TO anon, authenticated USING (true);
