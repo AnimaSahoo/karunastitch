@@ -1,7 +1,7 @@
 import { Heart, Users, MapPin, Award } from "lucide-react";
 
 const stats = [
-  { icon: Users, value: "50+", label: "Artisans Employed" },
+  { icon: Users, value: "5+", label: "Artisans Employed" },
   { icon: Heart, value: "100%", label: "Women-Led" },
   { icon: MapPin, value: "Odisha", label: "Made in India" },
   { icon: Award, value: "5★", label: "Quality Rated" },
