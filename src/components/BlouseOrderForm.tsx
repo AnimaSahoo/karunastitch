@@ -165,17 +165,29 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
         // Save current order to sessionStorage for checkout page
         setCurrentOrder(savedOrder);
         
-        // Send order confirmation email (only needs orderId now)
+        // Send order confirmation email to customer and admin notification
         if (savedOrder.email) {
           try {
-            const { error } = await supabase.functions.invoke("send-order-confirmation", {
+            // Send customer confirmation email
+            const { error: customerEmailError } = await supabase.functions.invoke("send-order-confirmation", {
               body: {
                 orderId: savedOrder.id,
               },
             });
             
-            if (error) {
-              console.error("Failed to send confirmation email:", error);
+            if (customerEmailError) {
+              console.error("Failed to send customer confirmation email:", customerEmailError);
+            }
+
+            // Send admin notification email
+            const { error: adminEmailError } = await supabase.functions.invoke("send-admin-notification", {
+              body: {
+                orderId: savedOrder.id,
+              },
+            });
+            
+            if (adminEmailError) {
+              console.error("Failed to send admin notification email:", adminEmailError);
             }
           } catch (emailError) {
             console.error("Email sending error:", emailError);
