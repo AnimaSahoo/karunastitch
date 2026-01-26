@@ -144,7 +144,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -163,30 +163,36 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
       return;
     }
 
-    // Create order object
-    const orderId = `BB-${Date.now().toString(36).toUpperCase()}`;
+    // Create order object for database
     const orderData = {
-      id: orderId,
-      orderDate: new Date().toLocaleDateString(),
+      orderDate: new Date().toISOString(),
       ...formData,
       deliveryDate: formData.deliveryDate ? format(formData.deliveryDate, "PPP") : "",
       selectedDesign: selectedDesign || (referenceImage ? "Reference Image" : "Custom Sketch"),
       designDescription,
     };
 
-    // Save to localStorage (append to existing orders)
-    const existingOrders = JSON.parse(localStorage.getItem("blouseOrders") || "[]");
-    existingOrders.push(orderData);
-    localStorage.setItem("blouseOrders", JSON.stringify(existingOrders));
-
-    // Save current order to sessionStorage for checkout page
-    sessionStorage.setItem("currentOrder", JSON.stringify(orderData));
-
-    toast.success("Order placed successfully!");
-    onSubmit?.();
-    
-    // Navigate to checkout page
-    navigate("/checkout");
+    try {
+      // Save to database
+      const { saveOrder, setCurrentOrder } = await import("@/lib/orderUtils");
+      const savedOrder = await saveOrder(orderData);
+      
+      if (savedOrder) {
+        // Save current order to sessionStorage for checkout page
+        setCurrentOrder(savedOrder);
+        
+        toast.success("Order placed successfully!");
+        onSubmit?.();
+        
+        // Navigate to checkout page
+        navigate("/checkout");
+      } else {
+        toast.error("Failed to save order. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error saving order:", error);
+      toast.error("Failed to save order. Please try again.");
+    }
   };
 
   return (

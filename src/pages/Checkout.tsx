@@ -2,126 +2,115 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Download, ArrowLeft, ShoppingBag } from "lucide-react";
+import { CheckCircle, Download, ArrowLeft, ShoppingBag, Loader2 } from "lucide-react";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
-
-interface OrderData {
-  id: string;
-  orderDate: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  street: string;
-  city: string;
-  state: string;
-  zip: string;
-  country: string;
-  blouseBackLength: string;
-  fullShoulder: string;
-  shoulderStrap: string;
-  backNeckDepth: string;
-  frontNeckDepth: string;
-  shoulderToApex: string;
-  frontLength: string;
-  chest: string;
-  waist: string;
-  sleeveLength: string;
-  armRound: string;
-  sleeveRound: string;
-  armHole: string;
-  blouseType: string;
-  hookPosition: string;
-  deliveryDate: string;
-  extraClothsLaces: string;
-  selectedDesign: string;
-  designDescription: string;
-  specialRequests: string;
-  wantMeasurementHelp: boolean;
-}
+import { getCurrentOrder, getAllOrders, type OrderData } from "@/lib/orderUtils";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const [currentOrder, setCurrentOrder] = useState<OrderData | null>(null);
   const [allOrders, setAllOrders] = useState<OrderData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
-    // Load current order from sessionStorage
-    const orderData = sessionStorage.getItem("currentOrder");
-    if (orderData) {
-      setCurrentOrder(JSON.parse(orderData));
-    }
+    const loadData = async () => {
+      // Load current order from sessionStorage
+      const order = getCurrentOrder();
+      setCurrentOrder(order);
 
-    // Load all orders from localStorage
-    const storedOrders = localStorage.getItem("blouseOrders");
-    if (storedOrders) {
-      setAllOrders(JSON.parse(storedOrders));
-    }
+      // Load all orders from database
+      const orders = await getAllOrders();
+      setAllOrders(orders);
+      setIsLoading(false);
+    };
+
+    loadData();
   }, []);
 
-  const exportToExcel = () => {
-    if (allOrders.length === 0) {
-      toast.error("No orders to export");
-      return;
+  const exportToExcel = async () => {
+    setIsExporting(true);
+    try {
+      const orders = await getAllOrders();
+      
+      if (orders.length === 0) {
+        toast.error("No orders to export");
+        return;
+      }
+
+      // Prepare data for Excel
+      const excelData = orders.map((order, index) => ({
+        "Order #": index + 1,
+        "Order ID": order.id,
+        "Order Date": order.orderDate,
+        "Customer Name": order.fullName,
+        "Email": order.email,
+        "Phone": order.phone,
+        "Street": order.street,
+        "City": order.city,
+        "State": order.state,
+        "ZIP": order.zip,
+        "Country": order.country,
+        "1. Blouse Back Length": order.blouseBackLength,
+        "2. Full Shoulder": order.fullShoulder,
+        "3. Shoulder Strap": order.shoulderStrap,
+        "4. Back Neck Depth": order.backNeckDepth,
+        "5. Front Neck Depth": order.frontNeckDepth,
+        "6. Shoulder to Apex": order.shoulderToApex,
+        "7. Front Length": order.frontLength,
+        "8. Chest": order.chest,
+        "9. Waist": order.waist,
+        "10. Sleeve Length": order.sleeveLength,
+        "11. Arm Round": order.armRound,
+        "12. Sleeve Round": order.sleeveRound,
+        "13. Arm Hole": order.armHole,
+        "Blouse Type": order.blouseType,
+        "Hook Position": order.hookPosition,
+        "Delivery Date": order.deliveryDate,
+        "Extra Cloths/Laces": order.extraClothsLaces || "No",
+        "Selected Design": order.selectedDesign,
+        "Design Description": order.designDescription,
+        "Special Requests": order.specialRequests,
+        "Measurement Help": order.wantMeasurementHelp ? "Yes" : "No",
+        "Status": order.status,
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "All Orders");
+
+      // Auto-size columns
+      const maxWidth = 30;
+      const colWidths = Object.keys(excelData[0] || {}).map((key) => ({
+        wch: Math.min(key.length + 5, maxWidth),
+      }));
+      worksheet["!cols"] = colWidths;
+
+      // Generate and download file
+      const fileName = `KarunaStitch_AllOrders_${new Date().toISOString().split("T")[0]}.xlsx`;
+      XLSX.writeFile(workbook, fileName);
+      toast.success("Excel file downloaded successfully!");
+    } catch (error) {
+      console.error("Error exporting orders:", error);
+      toast.error("Failed to export orders");
+    } finally {
+      setIsExporting(false);
     }
-
-    // Prepare data for Excel
-    const excelData = allOrders.map((order, index) => ({
-      "Order #": index + 1,
-      "Order ID": order.id,
-      "Order Date": order.orderDate,
-      "Customer Name": order.fullName,
-      "Email": order.email,
-      "Phone": order.phone,
-      "Street": order.street,
-      "City": order.city,
-      "State": order.state,
-      "ZIP": order.zip,
-      "Country": order.country,
-      "1. Blouse Back Length": order.blouseBackLength,
-      "2. Full Shoulder": order.fullShoulder,
-      "3. Shoulder Strap": order.shoulderStrap,
-      "4. Back Neck Depth": order.backNeckDepth,
-      "5. Front Neck Depth": order.frontNeckDepth,
-      "6. Shoulder to Apex": order.shoulderToApex,
-      "7. Front Length": order.frontLength,
-      "8. Chest": order.chest,
-      "9. Waist": order.waist,
-      "10. Sleeve Length": order.sleeveLength,
-      "11. Arm Round": order.armRound,
-      "12. Sleeve Round": order.sleeveRound,
-      "13. Arm Hole": order.armHole,
-      "Blouse Type": order.blouseType,
-      "Hook Position": order.hookPosition,
-      "Delivery Date": order.deliveryDate,
-      "Extra Cloths/Laces": order.extraClothsLaces || "No",
-      "Selected Design": order.selectedDesign,
-      "Design Description": order.designDescription,
-      "Special Requests": order.specialRequests,
-      "Measurement Help": order.wantMeasurementHelp ? "Yes" : "No",
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "All Orders");
-
-    // Auto-size columns
-    const maxWidth = 30;
-    const colWidths = Object.keys(excelData[0] || {}).map((key) => ({
-      wch: Math.min(key.length + 5, maxWidth),
-    }));
-    worksheet["!cols"] = colWidths;
-
-    // Generate and download file
-    const fileName = `KarunaStitch_AllOrders_${new Date().toISOString().split("T")[0]}.xlsx`;
-    XLSX.writeFile(workbook, fileName);
-    toast.success("Excel file downloaded successfully!");
   };
 
   const handleBackToHome = () => {
     sessionStorage.removeItem("currentOrder");
     navigate("/");
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   if (!currentOrder) {
     return (
@@ -141,6 +130,19 @@ const Checkout = () => {
       </div>
     );
   }
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
+    try {
+      return new Date(dateString).toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch {
+      return dateString;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background py-12 px-4">
@@ -167,11 +169,11 @@ const Checkout = () => {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground">Order ID</p>
-                <p className="font-medium">{currentOrder.id}</p>
+                <p className="font-medium font-mono">{currentOrder.id.slice(0, 8)}...</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Order Date</p>
-                <p className="font-medium">{currentOrder.orderDate}</p>
+                <p className="font-medium">{formatDate(currentOrder.orderDate)}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Phone</p>
@@ -215,8 +217,13 @@ const Checkout = () => {
             onClick={exportToExcel}
             variant="outline"
             className="w-full"
+            disabled={isExporting}
           >
-            <Download className="h-4 w-4 mr-2" />
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4 mr-2" />
+            )}
             Download All Orders as Excel ({allOrders.length} orders)
           </Button>
 
