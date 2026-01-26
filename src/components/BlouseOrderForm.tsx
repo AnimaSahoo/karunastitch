@@ -29,6 +29,7 @@ import { toast } from "sonner";
 // Import sample blouse images
 import blouseBoatNeck from "@/assets/blouse-boat-neck.jpg";
 import blouseCollar from "@/assets/blouse-collar.jpg";
+import blousePataDesign from "@/assets/blouse-pata-design.png";
 import measurementGuide from "@/assets/measurement-guide.jpg";
 
 interface BlouseOrderFormProps {
@@ -74,7 +75,7 @@ const sampleDesigns = [
   { id: "collar", name: "Collar Neck", image: blouseCollar, desc: "Shirt-style" },
   { id: "boat", name: "Boat Neck", image: blouseBoatNeck, desc: "Wide horizontal" },
   { id: "bow", name: "With a Bow", image: null, desc: "Coming soon" },
-  { id: "pata", name: "Pata Design", image: null, desc: "Coming soon" },
+  { id: "pata", name: "Pata Design", image: blousePataDesign, desc: "Traditional Odia" },
 ];
 
 export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
