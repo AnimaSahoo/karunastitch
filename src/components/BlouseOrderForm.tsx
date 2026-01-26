@@ -163,17 +163,12 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
         // Save current order to sessionStorage for checkout page
         setCurrentOrder(savedOrder);
         
-        // Send order confirmation email
+        // Send order confirmation email (only needs orderId now)
         if (savedOrder.email) {
           try {
             const { error } = await supabase.functions.invoke("send-order-confirmation", {
               body: {
                 orderId: savedOrder.id,
-                customerEmail: savedOrder.email,
-                customerName: savedOrder.fullName,
-                blouseType: savedOrder.blouseType,
-                deliveryDate: savedOrder.deliveryDate,
-                orderDate: savedOrder.orderDate,
               },
             });
             
