@@ -175,11 +175,35 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     try {
       // Save to database
       const { saveOrder, setCurrentOrder } = await import("@/lib/orderUtils");
+      const { supabase } = await import("@/integrations/supabase/client");
       const savedOrder = await saveOrder(orderData);
       
       if (savedOrder) {
         // Save current order to sessionStorage for checkout page
         setCurrentOrder(savedOrder);
+        
+        // Send order confirmation email
+        if (savedOrder.email) {
+          try {
+            const { error } = await supabase.functions.invoke("send-order-confirmation", {
+              body: {
+                orderId: savedOrder.id,
+                customerEmail: savedOrder.email,
+                customerName: savedOrder.fullName,
+                blouseType: savedOrder.blouseType,
+                deliveryDate: savedOrder.deliveryDate,
+                orderDate: savedOrder.orderDate,
+              },
+            });
+            
+            if (error) {
+              console.error("Failed to send confirmation email:", error);
+            }
+          } catch (emailError) {
+            console.error("Email sending error:", emailError);
+            // Don't block the order flow if email fails
+          }
+        }
         
         toast.success("Order placed successfully!");
         onSubmit?.();
