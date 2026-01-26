@@ -47,39 +47,72 @@ import {
 import { toast } from "@/hooks/use-toast";
 import * as XLSX from "xlsx";
 
-type SearchType = "all" | "name" | "email" | "phone";
+type SearchType = "all" | "name" | "email" | "phone" | "orderId" | "blouseType";
 
 const Admin = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchType, setSearchType] = useState<SearchType>("all");
+  const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
   const [selectedOrder, setSelectedOrder] = useState<OrderData | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const orders = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return getAllOrders();
+    let filteredOrders = getAllOrders();
+
+    // Apply status filter
+    if (statusFilter !== "all") {
+      filteredOrders = filteredOrders.filter(
+        (order) => (order.status || "pending") === statusFilter
+      );
     }
 
-    switch (searchType) {
-      case "name":
-        return getOrdersByName(searchQuery);
-      case "email":
-        return getOrdersByEmail(searchQuery);
-      case "phone":
-        return getOrdersByPhone(searchQuery);
-      case "all":
-      default:
-        const allOrders = getAllOrders();
-        const query = searchQuery.toLowerCase();
-        return allOrders.filter(
-          (order) =>
-            order.fullName.toLowerCase().includes(query) ||
-            order.email.toLowerCase().includes(query) ||
-            order.phone.includes(query) ||
+    // Apply search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      switch (searchType) {
+        case "name":
+          filteredOrders = filteredOrders.filter((order) =>
+            order.fullName.toLowerCase().includes(query)
+          );
+          break;
+        case "email":
+          filteredOrders = filteredOrders.filter((order) =>
+            order.email.toLowerCase().includes(query)
+          );
+          break;
+        case "phone":
+          filteredOrders = filteredOrders.filter((order) =>
+            order.phone.includes(query)
+          );
+          break;
+        case "orderId":
+          filteredOrders = filteredOrders.filter((order) =>
             order.id.toLowerCase().includes(query)
-        );
+          );
+          break;
+        case "blouseType":
+          filteredOrders = filteredOrders.filter((order) =>
+            order.blouseType.toLowerCase().includes(query)
+          );
+          break;
+        case "all":
+        default:
+          filteredOrders = filteredOrders.filter(
+            (order) =>
+              order.fullName.toLowerCase().includes(query) ||
+              order.email.toLowerCase().includes(query) ||
+              order.phone.includes(query) ||
+              order.id.toLowerCase().includes(query) ||
+              order.blouseType.toLowerCase().includes(query) ||
+              order.city?.toLowerCase().includes(query) ||
+              order.state?.toLowerCase().includes(query) ||
+              order.selectedDesign?.toLowerCase().includes(query)
+          );
+      }
     }
-  }, [searchQuery, searchType, refreshKey]);
+
+    return filteredOrders;
+  }, [searchQuery, searchType, statusFilter, refreshKey]);
 
   const handleDelete = (orderId: string) => {
     if (window.confirm("Are you sure you want to delete this order?")) {
@@ -214,12 +247,12 @@ const Admin = () => {
         {/* Search Section */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="text-lg">Search Orders</CardTitle>
+            <CardTitle className="text-lg">Search & Filter Orders</CardTitle>
             <CardDescription>
-              Find orders by customer name, email, phone, or order ID
+              Find orders by customer details, order ID, blouse type, location, or design
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-4">
               <Select
                 value={searchType}
@@ -230,9 +263,11 @@ const Admin = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Fields</SelectItem>
-                  <SelectItem value="name">Name</SelectItem>
+                  <SelectItem value="name">Customer Name</SelectItem>
                   <SelectItem value="email">Email</SelectItem>
                   <SelectItem value="phone">Phone</SelectItem>
+                  <SelectItem value="orderId">Order ID</SelectItem>
+                  <SelectItem value="blouseType">Blouse Type</SelectItem>
                 </SelectContent>
               </Select>
               <div className="relative flex-1">
@@ -245,6 +280,63 @@ const Admin = () => {
                 />
               </div>
             </div>
+            
+            {/* Status Filter */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">Filter by status:</span>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={statusFilter === "all" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setStatusFilter("all")}
+                >
+                  All
+                </Button>
+                <Button
+                  variant={statusFilter === "pending" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setStatusFilter("pending")}
+                >
+                  Pending
+                </Button>
+                <Button
+                  variant={statusFilter === "in-progress" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setStatusFilter("in-progress")}
+                >
+                  In Progress
+                </Button>
+                <Button
+                  variant={statusFilter === "completed" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setStatusFilter("completed")}
+                >
+                  Completed
+                </Button>
+              </div>
+              {(searchQuery || statusFilter !== "all") && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setStatusFilter("all");
+                  }}
+                  className="ml-auto text-muted-foreground"
+                >
+                  Clear filters
+                </Button>
+              )}
+            </div>
+
+            {/* Results count */}
+            {(searchQuery || statusFilter !== "all") && (
+              <p className="text-sm text-muted-foreground">
+                Showing {orders.length} {orders.length === 1 ? "order" : "orders"}
+                {statusFilter !== "all" && ` with status "${getStatusLabel(statusFilter as OrderStatus)}"`}
+                {searchQuery && ` matching "${searchQuery}"`}
+              </p>
+            )}
           </CardContent>
         </Card>
 
