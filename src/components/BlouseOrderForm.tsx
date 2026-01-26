@@ -272,11 +272,12 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
         // Navigate to checkout page
         navigate("/checkout");
       } else {
-        toast.error("Failed to save order. Please try again.");
+        toast.error("Failed to save order. Check console for details.");
       }
     } catch (error) {
       console.error("Error saving order:", error);
-      toast.error("Failed to save order. Please try again.");
+      console.error("Error details:", error);
+      toast.error(`Failed to save order: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }
