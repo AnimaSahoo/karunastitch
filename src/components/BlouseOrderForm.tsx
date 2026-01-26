@@ -75,7 +75,7 @@ const sampleDesigns = [
   { id: "collar", name: "Collar Neck", image: blouseCollar, desc: "Shirt-style" },
   { id: "boat", name: "Boat Neck", image: blouseBoatNeck, desc: "Wide horizontal" },
   { id: "bow", name: "With a Bow", image: null, desc: "Coming soon" },
-  { id: "pata", name: "Pata Design", image: blousePataDesign, desc: "Traditional Odia" },
+  { id: "pata", name: "PataSaree Blouse Design", image: blousePataDesign, desc: "Traditional Odia" },
 ];
 
 export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
