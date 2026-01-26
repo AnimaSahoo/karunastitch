@@ -279,6 +279,10 @@ const Admin = () => {
                   className="pl-10"
                 />
               </div>
+              <Button variant="default" className="shrink-0">
+                <Search className="h-4 w-4 mr-2" />
+                Search
+              </Button>
             </div>
             
             {/* Status Filter */}
