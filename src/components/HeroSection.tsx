@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles } from "lucide-react";
+import { Heart, Sparkles, ClipboardList } from "lucide-react";
+import { Link } from "react-router-dom";
 import logo from "@/assets/blouse-beyond-logo.png";
 
 interface HeroSectionProps {
@@ -19,10 +20,17 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
             <span>Stitch</span>
           </span>
         </div>
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-          <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
-          <a href="#design" className="hover:text-primary transition-colors">Design</a>
-          <a href="#impact" className="hover:text-primary transition-colors">Our Impact</a>
+        <nav className="flex items-center gap-4 md:gap-6 text-sm font-medium text-muted-foreground">
+          <a href="#how-it-works" className="hidden md:inline hover:text-primary transition-colors">How It Works</a>
+          <a href="#design" className="hidden md:inline hover:text-primary transition-colors">Design</a>
+          <a href="#impact" className="hidden md:inline hover:text-primary transition-colors">Our Impact</a>
+          <Link 
+            to="/admin" 
+            className="flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors"
+          >
+            <ClipboardList className="h-4 w-4" />
+            <span className="hidden sm:inline">Orders</span>
+          </Link>
         </nav>
       </header>
 
