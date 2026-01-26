@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      email_sends: {
+        Row: {
+          function_name: string
+          id: string
+          order_id: string
+          sent_at: string
+        }
+        Insert: {
+          function_name: string
+          id?: string
+          order_id: string
+          sent_at?: string
+        }
+        Update: {
+          function_name?: string
+          id?: string
+          order_id?: string
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_sends_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feedback: {
         Row: {
           comments: string | null
