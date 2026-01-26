@@ -1,3 +1,5 @@
+export type OrderStatus = "pending" | "in-progress" | "completed";
+
 export interface OrderData {
   id: string;
   orderDate: string;
@@ -30,6 +32,7 @@ export interface OrderData {
   designDescription: string;
   specialRequests: string;
   wantMeasurementHelp: boolean;
+  status: OrderStatus;
 }
 
 const ORDERS_KEY = "blouseOrders";
@@ -99,6 +102,24 @@ export const deleteOrderById = (orderId: string): boolean => {
     return true;
   }
   return false;
+};
+
+// Update order status
+export const updateOrderStatus = (orderId: string, status: OrderStatus): boolean => {
+  const orders = getAllOrders();
+  const orderIndex = orders.findIndex((order) => order.id === orderId);
+  if (orderIndex !== -1) {
+    orders[orderIndex].status = status;
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+    return true;
+  }
+  return false;
+};
+
+// Get orders by status
+export const getOrdersByStatus = (status: OrderStatus): OrderData[] => {
+  const orders = getAllOrders();
+  return orders.filter((order) => order.status === status);
 };
 
 // Get total order count
