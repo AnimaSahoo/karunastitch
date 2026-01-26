@@ -36,7 +36,7 @@ const Feedback = () => {
             We'd Love Your Feedback
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            Your feedback helps us create better blouses and improve our service for you and other customers.
+            Your feedback truly matters to us. It helps us refine our craft and create blouses you'll love even more.
           </p>
         </div>
 
