@@ -31,8 +31,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Search, Eye, Trash2, ArrowLeft, Download, Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Search, Eye, Trash2, ArrowLeft, Download, Loader2, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   getAllOrders,
   searchOrders,
@@ -47,6 +47,7 @@ import {
   type OrderStatus,
 } from "@/lib/orderUtils";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import * as XLSX from "xlsx";
 
 type SearchType = "all" | "name" | "email" | "phone" | "orderId" | "blouseType";
@@ -60,6 +61,17 @@ const Admin = () => {
   const [orderCount, setOrderCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+  };
 
   // Load orders from database
   const loadOrders = useCallback(async () => {
@@ -289,6 +301,10 @@ const Admin = () => {
             <Button onClick={handleExport} variant="outline">
               <Download className="h-4 w-4 mr-2" />
               Export All
+            </Button>
+            <Button onClick={handleLogout} variant="ghost" size="sm">
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
             </Button>
           </div>
         </div>
