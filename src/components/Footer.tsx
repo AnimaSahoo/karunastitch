@@ -1,10 +1,28 @@
-import { Mail, Phone, Instagram, Heart, ClipboardList } from "lucide-react";
+import { Mail, Phone, Instagram, Heart, ClipboardList, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
     <footer className="bg-foreground text-background py-12">
       <div className="container mx-auto px-4">
+        {/* Feedback CTA for returning customers */}
+        <div className="bg-primary/10 rounded-xl p-6 mb-8 text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <MessageSquare className="h-5 w-5 text-accent" />
+            <h4 className="font-semibold text-lg">Already received your order?</h4>
+          </div>
+          <p className="text-muted opacity-80 text-sm mb-4">
+            We'd love to hear about your experience! Your feedback helps us improve.
+          </p>
+          <Link 
+            to="/feedback"
+            className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-6 py-2 rounded-full font-medium hover:bg-accent/90 transition-colors"
+          >
+            <MessageSquare className="h-4 w-4" />
+            Share Your Feedback
+          </Link>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           {/* Brand */}
           <div>
