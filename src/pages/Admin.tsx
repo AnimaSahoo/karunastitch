@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,16 +31,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Search, Eye, Trash2, ArrowLeft, Download } from "lucide-react";
+import { Search, Eye, Trash2, ArrowLeft, Download, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   getAllOrders,
+  searchOrders,
   getOrdersByName,
   getOrdersByEmail,
   getOrdersByPhone,
   deleteOrderById,
   updateOrderStatus,
   getOrderCount,
+  getOrdersByStatus,
   type OrderData,
   type OrderStatus,
 } from "@/lib/orderUtils";
@@ -54,75 +56,116 @@ const Admin = () => {
   const [searchType, setSearchType] = useState<SearchType>("all");
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
   const [selectedOrder, setSelectedOrder] = useState<OrderData | null>(null);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [orders, setOrders] = useState<OrderData[]>([]);
+  const [orderCount, setOrderCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const orders = useMemo(() => {
-    let filteredOrders = getAllOrders();
+  // Load orders from database
+  const loadOrders = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      let fetchedOrders: OrderData[];
+      
+      if (statusFilter !== "all") {
+        fetchedOrders = await getOrdersByStatus(statusFilter);
+      } else {
+        fetchedOrders = await getAllOrders();
+      }
+      
+      setOrders(fetchedOrders);
+      const count = await getOrderCount();
+      setOrderCount(count);
+    } catch (error) {
+      console.error("Error loading orders:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load orders.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [statusFilter]);
 
-    // Apply status filter
-    if (statusFilter !== "all") {
-      filteredOrders = filteredOrders.filter(
-        (order) => (order.status || "pending") === statusFilter
-      );
+  // Initial load
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
+
+  // Handle search
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      loadOrders();
+      return;
     }
 
-    // Apply search query
-    if (searchQuery.trim()) {
+    setIsSearching(true);
+    try {
+      let results: OrderData[];
       const query = searchQuery.toLowerCase();
+
       switch (searchType) {
         case "name":
-          filteredOrders = filteredOrders.filter((order) =>
-            order.fullName.toLowerCase().includes(query)
-          );
+          results = await getOrdersByName(query);
           break;
         case "email":
-          filteredOrders = filteredOrders.filter((order) =>
-            order.email.toLowerCase().includes(query)
-          );
+          results = await getOrdersByEmail(query);
           break;
         case "phone":
-          filteredOrders = filteredOrders.filter((order) =>
-            order.phone.includes(query)
-          );
+          results = await getOrdersByPhone(query);
           break;
         case "orderId":
-          filteredOrders = filteredOrders.filter((order) =>
+          results = await searchOrders(query);
+          results = results.filter((order) =>
             order.id.toLowerCase().includes(query)
           );
           break;
         case "blouseType":
-          filteredOrders = filteredOrders.filter((order) =>
+          results = await searchOrders(query);
+          results = results.filter((order) =>
             order.blouseType.toLowerCase().includes(query)
           );
           break;
         case "all":
         default:
-          filteredOrders = filteredOrders.filter(
-            (order) =>
-              order.fullName.toLowerCase().includes(query) ||
-              order.email.toLowerCase().includes(query) ||
-              order.phone.includes(query) ||
-              order.id.toLowerCase().includes(query) ||
-              order.blouseType.toLowerCase().includes(query) ||
-              order.city?.toLowerCase().includes(query) ||
-              order.state?.toLowerCase().includes(query) ||
-              order.selectedDesign?.toLowerCase().includes(query)
-          );
+          results = await searchOrders(query);
       }
+
+      // Apply status filter to search results
+      if (statusFilter !== "all") {
+        results = results.filter((order) => order.status === statusFilter);
+      }
+
+      setOrders(results);
+    } catch (error) {
+      console.error("Error searching orders:", error);
+      toast({
+        title: "Error",
+        description: "Failed to search orders.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSearching(false);
     }
+  };
 
-    return filteredOrders;
-  }, [searchQuery, searchType, statusFilter, refreshKey]);
+  // Handle Enter key for search
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
-  const handleDelete = (orderId: string) => {
+  const handleDelete = async (orderId: string) => {
     if (window.confirm("Are you sure you want to delete this order?")) {
-      const success = deleteOrderById(orderId);
+      const success = await deleteOrderById(orderId);
       if (success) {
         toast({
           title: "Order deleted",
           description: "The order has been successfully deleted.",
         });
-        setRefreshKey((prev) => prev + 1);
+        loadOrders();
         setSelectedOrder(null);
       } else {
         toast({
@@ -134,14 +177,14 @@ const Admin = () => {
     }
   };
 
-  const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
-    const success = updateOrderStatus(orderId, newStatus);
+  const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
+    const success = await updateOrderStatus(orderId, newStatus);
     if (success) {
       toast({
         title: "Status updated",
         description: `Order status changed to ${newStatus}.`,
       });
-      setRefreshKey((prev) => prev + 1);
+      loadOrders();
       if (selectedOrder && selectedOrder.id === orderId) {
         setSelectedOrder({ ...selectedOrder, status: newStatus });
       }
@@ -180,8 +223,8 @@ const Admin = () => {
     }
   };
 
-  const handleExport = () => {
-    const allOrders = getAllOrders();
+  const handleExport = async () => {
+    const allOrders = await getAllOrders();
     if (allOrders.length === 0) {
       toast({
         title: "No orders to export",
@@ -213,6 +256,12 @@ const Admin = () => {
     });
   };
 
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("all");
+    loadOrders();
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -235,7 +284,7 @@ const Admin = () => {
           </div>
           <div className="flex items-center gap-4">
             <Badge variant="secondary" className="text-lg px-4 py-2">
-              {getOrderCount()} Orders
+              {orderCount} Orders
             </Badge>
             <Button onClick={handleExport} variant="outline">
               <Download className="h-4 w-4 mr-2" />
@@ -276,11 +325,21 @@ const Admin = () => {
                   placeholder="Search orders..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
                   className="pl-10"
                 />
               </div>
-              <Button variant="default" className="shrink-0">
-                <Search className="h-4 w-4 mr-2" />
+              <Button 
+                variant="default" 
+                className="shrink-0"
+                onClick={handleSearch}
+                disabled={isSearching}
+              >
+                {isSearching ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Search className="h-4 w-4 mr-2" />
+                )}
                 Search
               </Button>
             </div>
@@ -292,28 +351,40 @@ const Admin = () => {
                 <Button
                   variant={statusFilter === "all" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setStatusFilter("all")}
+                  onClick={() => {
+                    setStatusFilter("all");
+                    if (!searchQuery) loadOrders();
+                  }}
                 >
                   All
                 </Button>
                 <Button
                   variant={statusFilter === "pending" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setStatusFilter("pending")}
+                  onClick={() => {
+                    setStatusFilter("pending");
+                    if (!searchQuery) loadOrders();
+                  }}
                 >
                   Pending
                 </Button>
                 <Button
                   variant={statusFilter === "in-progress" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setStatusFilter("in-progress")}
+                  onClick={() => {
+                    setStatusFilter("in-progress");
+                    if (!searchQuery) loadOrders();
+                  }}
                 >
                   In Progress
                 </Button>
                 <Button
                   variant={statusFilter === "completed" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setStatusFilter("completed")}
+                  onClick={() => {
+                    setStatusFilter("completed");
+                    if (!searchQuery) loadOrders();
+                  }}
                 >
                   Completed
                 </Button>
@@ -322,10 +393,7 @@ const Admin = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setStatusFilter("all");
-                  }}
+                  onClick={handleClearFilters}
                   className="ml-auto text-muted-foreground"
                 >
                   Clear filters
@@ -347,7 +415,12 @@ const Admin = () => {
         {/* Orders Table */}
         <Card>
           <CardContent className="p-0">
-            {orders.length === 0 ? (
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <span className="ml-2 text-muted-foreground">Loading orders...</span>
+              </div>
+            ) : orders.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-lg">No orders found</p>
                 <p className="text-muted-foreground text-sm mt-2">
@@ -490,72 +563,58 @@ const Admin = () => {
                 {/* Measurements */}
                 <div>
                   <h3 className="font-semibold text-lg mb-3">Measurements</h3>
-                  <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
                     <div>
-                      <p className="text-muted-foreground">Back Length</p>
-                      <p className="font-medium">
-                        {selectedOrder.blouseBackLength}
-                      </p>
+                      <p className="text-muted-foreground">Blouse Back Length</p>
+                      <p className="font-medium">{selectedOrder.blouseBackLength || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Full Shoulder</p>
-                      <p className="font-medium">
-                        {selectedOrder.fullShoulder}
-                      </p>
+                      <p className="font-medium">{selectedOrder.fullShoulder || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Shoulder Strap</p>
-                      <p className="font-medium">
-                        {selectedOrder.shoulderStrap}
-                      </p>
+                      <p className="font-medium">{selectedOrder.shoulderStrap || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Back Neck Depth</p>
-                      <p className="font-medium">
-                        {selectedOrder.backNeckDepth}
-                      </p>
+                      <p className="font-medium">{selectedOrder.backNeckDepth || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Front Neck Depth</p>
-                      <p className="font-medium">
-                        {selectedOrder.frontNeckDepth}
-                      </p>
+                      <p className="font-medium">{selectedOrder.frontNeckDepth || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Shoulder to Apex</p>
-                      <p className="font-medium">
-                        {selectedOrder.shoulderToApex}
-                      </p>
+                      <p className="font-medium">{selectedOrder.shoulderToApex || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Front Length</p>
-                      <p className="font-medium">{selectedOrder.frontLength}</p>
+                      <p className="font-medium">{selectedOrder.frontLength || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Chest</p>
-                      <p className="font-medium">{selectedOrder.chest}</p>
+                      <p className="font-medium">{selectedOrder.chest || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Waist</p>
-                      <p className="font-medium">{selectedOrder.waist}</p>
+                      <p className="font-medium">{selectedOrder.waist || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Sleeve Length</p>
-                      <p className="font-medium">
-                        {selectedOrder.sleeveLength}
-                      </p>
+                      <p className="font-medium">{selectedOrder.sleeveLength || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Arm Round</p>
-                      <p className="font-medium">{selectedOrder.armRound}</p>
+                      <p className="font-medium">{selectedOrder.armRound || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Sleeve Round</p>
-                      <p className="font-medium">{selectedOrder.sleeveRound}</p>
+                      <p className="font-medium">{selectedOrder.sleeveRound || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Arm Hole</p>
-                      <p className="font-medium">{selectedOrder.armHole}</p>
+                      <p className="font-medium">{selectedOrder.armHole || "N/A"}</p>
                     </div>
                   </div>
                 </div>
@@ -566,94 +625,84 @@ const Admin = () => {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="text-muted-foreground">Blouse Type</p>
-                      <p className="font-medium">{selectedOrder.blouseType}</p>
+                      <p className="font-medium">{selectedOrder.blouseType || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Hook Position</p>
-                      <p className="font-medium">
-                        {selectedOrder.hookPosition}
-                      </p>
+                      <p className="font-medium">{selectedOrder.hookPosition || "N/A"}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Selected Design</p>
-                      <p className="font-medium">
-                        {selectedOrder.selectedDesign || "N/A"}
-                      </p>
+                      <p className="font-medium">{selectedOrder.selectedDesign || "N/A"}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">
-                        Extra Cloths/Laces
-                      </p>
-                      <p className="font-medium">
-                        {selectedOrder.extraClothsLaces || "None"}
-                      </p>
+                      <p className="text-muted-foreground">Extra Cloths/Laces</p>
+                      <p className="font-medium">{selectedOrder.extraClothsLaces || "No"}</p>
                     </div>
                   </div>
                   {selectedOrder.designDescription && (
                     <div className="mt-4">
-                      <p className="text-muted-foreground">
-                        Design Description
-                      </p>
-                      <p className="font-medium">
-                        {selectedOrder.designDescription}
-                      </p>
+                      <p className="text-muted-foreground">Design Description</p>
+                      <p className="font-medium">{selectedOrder.designDescription}</p>
                     </div>
                   )}
                   {selectedOrder.specialRequests && (
                     <div className="mt-4">
                       <p className="text-muted-foreground">Special Requests</p>
-                      <p className="font-medium">
-                        {selectedOrder.specialRequests}
-                      </p>
+                      <p className="font-medium">{selectedOrder.specialRequests}</p>
                     </div>
                   )}
                 </div>
 
                 {/* Order Info */}
                 <div>
-                  <h3 className="font-semibold text-lg mb-3">Order Info</h3>
+                  <h3 className="font-semibold text-lg mb-3">Order Information</h3>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="text-muted-foreground">Order Date</p>
-                      <p className="font-medium">
-                        {formatDate(selectedOrder.orderDate)}
-                      </p>
+                      <p className="font-medium">{formatDate(selectedOrder.orderDate)}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Delivery Date</p>
-                      <p className="font-medium">
-                        {formatDate(selectedOrder.deliveryDate)}
-                      </p>
+                      <p className="font-medium">{formatDate(selectedOrder.deliveryDate)}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Status</p>
-                      <Select
-                        value={selectedOrder.status || "pending"}
-                        onValueChange={(value: OrderStatus) =>
-                          handleStatusChange(selectedOrder.id, value)
-                        }
-                      >
-                        <SelectTrigger className="w-[140px] mt-1">
-                          <Badge variant={getStatusBadgeVariant(selectedOrder.status || "pending")}>
-                            {getStatusLabel(selectedOrder.status || "pending")}
-                          </Badge>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="in-progress">In Progress</SelectItem>
-                          <SelectItem value="completed">Completed</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Badge variant={getStatusBadgeVariant(selectedOrder.status || "pending")}>
+                        {getStatusLabel(selectedOrder.status || "pending")}
+                      </Badge>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">
-                        Measurement Help Requested
-                      </p>
-                      <p className="font-medium">
-                        {selectedOrder.wantMeasurementHelp ? "Yes" : "No"}
-                      </p>
+                      <p className="text-muted-foreground">Measurement Help</p>
+                      <p className="font-medium">{selectedOrder.wantMeasurementHelp ? "Yes" : "No"}</p>
                     </div>
                   </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-3 pt-4 border-t">
+                  <Select
+                    value={selectedOrder.status || "pending"}
+                    onValueChange={(value: OrderStatus) =>
+                      handleStatusChange(selectedOrder.id, value)
+                    }
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Update status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="in-progress">In Progress</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleDelete(selectedOrder.id)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Order
+                  </Button>
                 </div>
               </div>
             )}

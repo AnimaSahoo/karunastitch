@@ -14,7 +14,117 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          arm_hole: string | null
+          arm_round: string | null
+          back_neck_depth: string | null
+          blouse_back_length: string | null
+          blouse_type: string | null
+          chest: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          delivery_date: string | null
+          design_description: string | null
+          email: string
+          extra_cloths_laces: string | null
+          front_length: string | null
+          front_neck_depth: string | null
+          full_name: string
+          full_shoulder: string | null
+          hook_position: string | null
+          id: string
+          order_date: string
+          phone: string
+          selected_design: string | null
+          shoulder_strap: string | null
+          shoulder_to_apex: string | null
+          sleeve_length: string | null
+          sleeve_round: string | null
+          special_requests: string | null
+          state: string | null
+          status: string
+          street: string | null
+          updated_at: string
+          waist: string | null
+          want_measurement_help: boolean | null
+          zip: string | null
+        }
+        Insert: {
+          arm_hole?: string | null
+          arm_round?: string | null
+          back_neck_depth?: string | null
+          blouse_back_length?: string | null
+          blouse_type?: string | null
+          chest?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          delivery_date?: string | null
+          design_description?: string | null
+          email: string
+          extra_cloths_laces?: string | null
+          front_length?: string | null
+          front_neck_depth?: string | null
+          full_name: string
+          full_shoulder?: string | null
+          hook_position?: string | null
+          id?: string
+          order_date?: string
+          phone: string
+          selected_design?: string | null
+          shoulder_strap?: string | null
+          shoulder_to_apex?: string | null
+          sleeve_length?: string | null
+          sleeve_round?: string | null
+          special_requests?: string | null
+          state?: string | null
+          status?: string
+          street?: string | null
+          updated_at?: string
+          waist?: string | null
+          want_measurement_help?: boolean | null
+          zip?: string | null
+        }
+        Update: {
+          arm_hole?: string | null
+          arm_round?: string | null
+          back_neck_depth?: string | null
+          blouse_back_length?: string | null
+          blouse_type?: string | null
+          chest?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          delivery_date?: string | null
+          design_description?: string | null
+          email?: string
+          extra_cloths_laces?: string | null
+          front_length?: string | null
+          front_neck_depth?: string | null
+          full_name?: string
+          full_shoulder?: string | null
+          hook_position?: string | null
+          id?: string
+          order_date?: string
+          phone?: string
+          selected_design?: string | null
+          shoulder_strap?: string | null
+          shoulder_to_apex?: string | null
+          sleeve_length?: string | null
+          sleeve_round?: string | null
+          special_requests?: string | null
+          state?: string | null
+          status?: string
+          street?: string | null
+          updated_at?: string
+          waist?: string | null
+          want_measurement_help?: boolean | null
+          zip?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
