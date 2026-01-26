@@ -391,7 +391,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
           </Card>
 
           {/* Design Options */}
-          <Card className="shadow-gold border-border">
+          <Card id="design" className="shadow-gold border-border scroll-mt-24">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-primary">
                 <Palette className="h-5 w-5" />
