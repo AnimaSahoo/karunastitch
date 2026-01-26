@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,8 @@ import {
   CheckCircle,
   X,
   CalendarIcon,
-  Upload
+  Upload,
+  Loader2
 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -25,6 +26,13 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { 
+  validateOrderForm, 
+  checkRateLimit, 
+  recordSubmission, 
+  checkHoneypot,
+  sanitizeInput 
+} from "@/lib/orderValidation";
 
 // Import sample blouse images
 import blouseBoatNeck from "@/assets/blouse-boat-neck.jpg";
@@ -81,6 +89,11 @@ const sampleDesigns = [
 
 export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [honeypot, setHoneypot] = useState(""); // Bot trap field
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const formStartTime = useRef(Date.now());
+  
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
@@ -122,6 +135,14 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
 
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (formErrors[field]) {
+      setFormErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
   };
 
   const handleReferenceUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,10 +155,55 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormErrors({});
     
-    // Basic validation
-    if (!formData.fullName || !formData.phone || !formData.street) {
-      toast.error("Please fill in all required fields");
+    // Anti-bot check 1: Honeypot field should be empty
+    if (!checkHoneypot(honeypot)) {
+      console.warn("Honeypot triggered - potential bot submission");
+      // Silently fail for bots
+      toast.success("Order placed successfully!");
+      return;
+    }
+    
+    // Anti-bot check 2: Form filled too quickly (less than 5 seconds)
+    const timeSpent = Date.now() - formStartTime.current;
+    if (timeSpent < 5000) {
+      console.warn("Form submitted too quickly - potential bot");
+      toast.error("Please take your time to fill out the form carefully.");
+      return;
+    }
+    
+    // Rate limiting check
+    const rateCheck = checkRateLimit();
+    if (!rateCheck.allowed) {
+      toast.error(rateCheck.message || "Please wait before submitting again.");
+      return;
+    }
+    
+    // Sanitize text inputs
+    const sanitizedFormData = {
+      ...formData,
+      fullName: sanitizeInput(formData.fullName),
+      email: sanitizeInput(formData.email),
+      phone: sanitizeInput(formData.phone),
+      street: sanitizeInput(formData.street),
+      city: sanitizeInput(formData.city),
+      state: sanitizeInput(formData.state),
+      zip: sanitizeInput(formData.zip),
+      country: sanitizeInput(formData.country),
+      specialRequests: sanitizeInput(formData.specialRequests),
+    };
+    
+    // Validate form with Zod
+    const validation = validateOrderForm({
+      ...sanitizedFormData,
+      designDescription: sanitizeInput(designDescription),
+    });
+    
+    if (!validation.success) {
+      setFormErrors(validation.errors || {});
+      const firstError = Object.values(validation.errors || {})[0];
+      toast.error(firstError || "Please fix the errors in the form");
       return;
     }
 
@@ -146,13 +212,15 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
       return;
     }
 
+    setIsSubmitting(true);
+
     // Create order object for database
     const orderData = {
       orderDate: new Date().toISOString(),
-      ...formData,
+      ...sanitizedFormData,
       deliveryDate: formData.deliveryDate ? format(formData.deliveryDate, "PPP") : "",
       selectedDesign: selectedDesign || (referenceImage ? "Reference Image" : "Custom Sketch"),
-      designDescription,
+      designDescription: sanitizeInput(designDescription),
     };
 
     try {
@@ -162,6 +230,9 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
       const savedOrder = await saveOrder(orderData);
       
       if (savedOrder) {
+        // Record this submission for rate limiting
+        recordSubmission();
+        
         // Save current order to sessionStorage for checkout page
         setCurrentOrder(savedOrder);
         
@@ -206,6 +277,8 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     } catch (error) {
       console.error("Error saving order:", error);
       toast.error("Failed to save order. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -235,6 +308,20 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
             </CardHeader>
             <CardContent className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Honeypot field - hidden from real users, bots will fill this */}
+                <div className="absolute opacity-0 pointer-events-none -z-10" aria-hidden="true">
+                  <Label htmlFor="website">Website</Label>
+                  <Input
+                    id="website"
+                    name="website"
+                    type="text"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+                
                 <div>
                   <Label htmlFor="fullName">Full Name *</Label>
                   <Input
@@ -243,8 +330,11 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                     onChange={(e) => handleInputChange("fullName", e.target.value)}
                     placeholder="Enter your full name"
                     required
-                    className="mt-1"
+                    className={cn("mt-1", formErrors.fullName && "border-destructive")}
                   />
+                  {formErrors.fullName && (
+                    <p className="text-sm text-destructive mt-1">{formErrors.fullName}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="phone">Phone Number *</Label>
@@ -254,8 +344,11 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                     placeholder="+1 (555) 000-0000"
                     required
-                    className="mt-1"
+                    className={cn("mt-1", formErrors.phone && "border-destructive")}
                   />
+                  {formErrors.phone && (
+                    <p className="text-sm text-destructive mt-1">{formErrors.phone}</p>
+                  )}
                 </div>
               </div>
               <div>
@@ -266,8 +359,11 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   placeholder="your@email.com"
-                  className="mt-1"
+                  className={cn("mt-1", formErrors.email && "border-destructive")}
                 />
+                {formErrors.email && (
+                  <p className="text-sm text-destructive mt-1">{formErrors.email}</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -777,9 +873,17 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                 <Button 
                   type="submit" 
                   size="lg"
+                  disabled={isSubmitting}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground px-10"
                 >
-                  Place My Order
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Placing Order...
+                    </>
+                  ) : (
+                    "Place My Order"
+                  )}
                 </Button>
               </div>
             </CardContent>
