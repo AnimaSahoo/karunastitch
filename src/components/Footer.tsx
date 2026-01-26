@@ -1,4 +1,5 @@
-import { Mail, Phone, Instagram, Heart } from "lucide-react";
+import { Mail, Phone, Instagram, Heart, ClipboardList } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
@@ -64,6 +65,13 @@ export const Footer = () => {
               <a href="#" className="block hover:text-accent transition-colors">
                 Privacy Policy
               </a>
+              <Link 
+                to="/admin" 
+                className="flex items-center gap-2 hover:text-accent transition-colors mt-4 pt-2 border-t border-muted/20"
+              >
+                <ClipboardList className="h-4 w-4" />
+                Order Management
+              </Link>
             </div>
           </div>
         </div>
