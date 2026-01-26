@@ -9,7 +9,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SketchCanvas } from "@/components/SketchCanvas";
 import { 
-  Upload, 
   User, 
   MapPin, 
   Ruler, 
@@ -17,7 +16,8 @@ import {
   Image as ImageIcon,
   CheckCircle,
   X,
-  CalendarIcon
+  CalendarIcon,
+  Upload
 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -112,7 +112,6 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     specialRequests: "",
   });
 
-  const [fabricPhotos, setFabricPhotos] = useState<File[]>([]);
   const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
   const [referenceImage, setReferenceImage] = useState<File | null>(null);
   const [sketchData, setSketchData] = useState<string>("");
@@ -121,19 +120,6 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
 
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleFabricUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const newFiles = Array.from(files).slice(0, 3);
-      setFabricPhotos(newFiles);
-      toast.success(`${newFiles.length} fabric photo(s) uploaded`);
-    }
-  };
-
-  const removeFabricPhoto = (index: number) => {
-    setFabricPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleReferenceUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,11 +136,6 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     // Basic validation
     if (!formData.fullName || !formData.phone || !formData.street) {
       toast.error("Please fill in all required fields");
-      return;
-    }
-
-    if (fabricPhotos.length === 0) {
-      toast.error("Please upload at least one fabric photo");
       return;
     }
 
@@ -230,7 +211,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
             Create Your Masterpiece
           </p>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Fill in your details, upload your fabric, and choose your design
+            Fill in your details and choose your design
           </p>
         </div>
 
@@ -349,77 +330,29 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
             </CardContent>
           </Card>
 
-          {/* Fabric Upload */}
+          {/* Extra Cloths/Laces Option */}
           <Card className="shadow-gold border-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-primary">
-                <Upload className="h-5 w-5" />
-                Upload Fabric Photos
+                Additional Materials
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <p className="text-sm text-muted-foreground mb-4">
-                Upload 1-3 clear photos of your blouse fabric material
-              </p>
-              
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors">
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleFabricUpload}
-                  className="hidden"
-                  id="fabric-upload"
-                />
-                <label htmlFor="fabric-upload" className="cursor-pointer">
-                  <Upload className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-                  <p className="font-medium">Click to upload fabric photos</p>
-                  <p className="text-sm text-muted-foreground">
-                    PNG, JPG up to 10MB each (max 3 files)
-                  </p>
-                </label>
-              </div>
-
-              {/* Preview uploaded photos */}
-              {fabricPhotos.length > 0 && (
-                <div className="mt-4 flex gap-4 flex-wrap">
-                  {fabricPhotos.map((file, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={`Fabric ${index + 1}`}
-                        className="w-24 h-24 object-cover rounded-lg border border-border"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeFabricPhoto(index)}
-                        className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
+              <Label className="mb-3 block font-semibold">Extra Cloths/Laces Needed?</Label>
+              <RadioGroup
+                value={formData.extraClothsLaces}
+                onValueChange={(value) => handleInputChange("extraClothsLaces", value)}
+                className="flex gap-6"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="extra-yes" />
+                  <Label htmlFor="extra-yes" className="cursor-pointer">Yes</Label>
                 </div>
-              )}
-
-              {/* Extra Cloths/Laces Option */}
-              <div className="pt-4 border-t mt-4">
-                <Label className="mb-3 block font-semibold">Extra Cloths/Laces Needed?</Label>
-                <RadioGroup
-                  value={formData.extraClothsLaces}
-                  onValueChange={(value) => handleInputChange("extraClothsLaces", value)}
-                  className="flex gap-6"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="extra-yes" />
-                    <Label htmlFor="extra-yes" className="cursor-pointer">Yes</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="extra-no" />
-                    <Label htmlFor="extra-no" className="cursor-pointer">No</Label>
-                  </div>
-                </RadioGroup>
-              </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="extra-no" />
+                  <Label htmlFor="extra-no" className="cursor-pointer">No</Label>
+                </div>
+              </RadioGroup>
             </CardContent>
           </Card>
 
