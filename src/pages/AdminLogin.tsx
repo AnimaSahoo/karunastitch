@@ -13,7 +13,8 @@ const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,20 +22,36 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await signIn(email, password);
-
-      if (error) {
-        toast({
-          title: 'Login failed',
-          description: error.message,
-          variant: 'destructive',
-        });
+      if (isSignUp) {
+        const { error } = await signUp(email, password);
+        if (error) {
+          toast({
+            title: 'Sign up failed',
+            description: error.message,
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Account created!',
+            description: 'Your account has been created. Contact admin to get admin access, then sign in.',
+          });
+          setIsSignUp(false);
+        }
       } else {
-        toast({
-          title: 'Login successful',
-          description: 'Redirecting to admin panel...',
-        });
-        navigate('/admin');
+        const { error } = await signIn(email, password);
+        if (error) {
+          toast({
+            title: 'Login failed',
+            description: error.message,
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Login successful',
+            description: 'Redirecting to admin panel...',
+          });
+          navigate('/admin');
+        }
       }
     } catch (error) {
       toast({
@@ -59,11 +76,11 @@ const AdminLogin = () => {
             </Link>
             <div className="flex items-center gap-2">
               <Lock className="h-5 w-5 text-primary" />
-              <CardTitle className="text-2xl">Admin Login</CardTitle>
+              <CardTitle className="text-2xl">{isSignUp ? 'Admin Sign Up' : 'Admin Login'}</CardTitle>
             </div>
           </div>
           <CardDescription>
-            Enter your credentials to access the admin panel
+            {isSignUp ? 'Create an account to get started' : 'Enter your credentials to access the admin panel'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -94,11 +111,19 @@ const AdminLogin = () => {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  {isSignUp ? 'Creating account...' : 'Signing in...'}
                 </>
               ) : (
-                'Sign In'
+                isSignUp ? 'Create Account' : 'Sign In'
               )}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full"
+              onClick={() => setIsSignUp(!isSignUp)}
+            >
+              {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
             </Button>
           </form>
         </CardContent>
