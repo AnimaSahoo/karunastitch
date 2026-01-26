@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Download, ArrowLeft, ShoppingBag, Loader2 } from "lucide-react";
+import { CheckCircle, Download, ArrowLeft, ShoppingBag, Loader2, MessageSquare } from "lucide-react";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
 import { getCurrentOrder, getAllOrders, type OrderData } from "@/lib/orderUtils";
@@ -234,6 +234,19 @@ const Checkout = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Place Another Order
           </Button>
+        </div>
+
+        {/* Feedback Link */}
+        <div className="mt-8 p-6 bg-muted/50 rounded-lg text-center">
+          <p className="text-muted-foreground mb-3">
+            Have you received your order? We'd love to hear your feedback!
+          </p>
+          <Link to="/feedback">
+            <Button variant="outline">
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Share Your Feedback
+            </Button>
+          </Link>
         </div>
 
         {/* Note */}
