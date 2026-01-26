@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      feedback: {
+        Row: {
+          comments: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          fitting_rating: number
+          id: string
+          order_id: string | null
+          overall_experience: number
+          quality_rating: number
+        }
+        Insert: {
+          comments?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          fitting_rating: number
+          id?: string
+          order_id?: string | null
+          overall_experience: number
+          quality_rating: number
+        }
+        Update: {
+          comments?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          fitting_rating?: number
+          id?: string
+          order_id?: string | null
+          overall_experience?: number
+          quality_rating?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           arm_hole: string | null
