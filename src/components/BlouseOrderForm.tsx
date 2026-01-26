@@ -223,9 +223,12 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     <section className="py-16 bg-background" id="order-form">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Place Your Order
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+            Start Your Order
           </h2>
+          <p className="text-2xl font-light text-primary mb-4">
+            Create Your Masterpiece
+          </p>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Fill in your details, upload your fabric, and choose your design
           </p>
