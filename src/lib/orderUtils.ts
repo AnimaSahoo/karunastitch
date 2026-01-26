@@ -271,6 +271,7 @@ export const saveOrder = async (order: Omit<OrderData, "id" | "status">): Promis
 
   if (error) {
     console.error("Error saving order:", error);
+    console.error("Error details:", JSON.stringify(error, null, 2));
     return null;
   }
 
