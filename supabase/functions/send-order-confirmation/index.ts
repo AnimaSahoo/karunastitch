@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
@@ -11,11 +12,6 @@ const corsHeaders = {
 
 interface OrderConfirmationRequest {
   orderId: string;
-  customerEmail: string;
-  customerName: string;
-  blouseType: string;
-  deliveryDate: string;
-  orderDate: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -25,18 +21,62 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { 
-      orderId, 
-      customerEmail, 
-      customerName, 
-      blouseType, 
-      deliveryDate,
-      orderDate 
-    }: OrderConfirmationRequest = await req.json();
+    const { orderId }: OrderConfirmationRequest = await req.json();
 
-    // Validate required fields
-    if (!orderId || !customerEmail || !customerName) {
-      throw new Error("Missing required fields: orderId, customerEmail, or customerName");
+    // Validate required field
+    if (!orderId) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Missing orderId" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Create Supabase client with service role to verify order exists
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    // Fetch order from database to verify it exists and get the actual email
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .select("id, email, full_name, blouse_type, delivery_date, order_date, created_at")
+      .eq("id", orderId)
+      .single();
+
+    if (orderError || !order) {
+      console.error("Order not found:", orderId, orderError);
+      return new Response(
+        JSON.stringify({ success: false, error: "Order not found" }),
+        { status: 404, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Check if order was created within the last 5 minutes (prevents abuse)
+    const createdAt = new Date(order.created_at);
+    const now = new Date();
+    const minutesSinceCreation = (now.getTime() - createdAt.getTime()) / (1000 * 60);
+    
+    if (minutesSinceCreation > 5) {
+      console.warn("Attempted to send confirmation for old order:", orderId);
+      return new Response(
+        JSON.stringify({ success: false, error: "Confirmation email can only be sent for recent orders" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Use email from database (not from request) to prevent spoofing
+    const customerEmail = order.email;
+    const customerName = order.full_name;
+    const blouseType = order.blouse_type;
+    const deliveryDate = order.delivery_date;
+    const orderDate = order.order_date;
+
+    if (!customerEmail) {
+      return new Response(
+        JSON.stringify({ success: false, error: "No email on order" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
     }
 
     const formattedOrderDate = new Date(orderDate).toLocaleDateString("en-IN", {
@@ -46,11 +86,7 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     const formattedDeliveryDate = deliveryDate 
-      ? new Date(deliveryDate).toLocaleDateString("en-IN", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
+      ? deliveryDate
       : "To be confirmed";
 
     const emailResponse = await resend.emails.send({
