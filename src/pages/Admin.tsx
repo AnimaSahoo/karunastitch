@@ -39,8 +39,10 @@ import {
   getOrdersByEmail,
   getOrdersByPhone,
   deleteOrderById,
+  updateOrderStatus,
   getOrderCount,
   type OrderData,
+  type OrderStatus,
 } from "@/lib/orderUtils";
 import { toast } from "@/hooks/use-toast";
 import * as XLSX from "xlsx";
@@ -96,6 +98,52 @@ const Admin = () => {
           variant: "destructive",
         });
       }
+    }
+  };
+
+  const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
+    const success = updateOrderStatus(orderId, newStatus);
+    if (success) {
+      toast({
+        title: "Status updated",
+        description: `Order status changed to ${newStatus}.`,
+      });
+      setRefreshKey((prev) => prev + 1);
+      if (selectedOrder && selectedOrder.id === orderId) {
+        setSelectedOrder({ ...selectedOrder, status: newStatus });
+      }
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to update order status.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getStatusBadgeVariant = (status: OrderStatus) => {
+    switch (status) {
+      case "pending":
+        return "secondary";
+      case "in-progress":
+        return "default";
+      case "completed":
+        return "outline";
+      default:
+        return "secondary";
+    }
+  };
+
+  const getStatusLabel = (status: OrderStatus) => {
+    switch (status) {
+      case "pending":
+        return "Pending";
+      case "in-progress":
+        return "In Progress";
+      case "completed":
+        return "Completed";
+      default:
+        return status;
     }
   };
 
@@ -221,6 +269,7 @@ const Admin = () => {
                       <TableHead>Customer</TableHead>
                       <TableHead>Contact</TableHead>
                       <TableHead>Blouse Type</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead>Order Date</TableHead>
                       <TableHead>Delivery Date</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
@@ -245,6 +294,25 @@ const Admin = () => {
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline">{order.blouseType}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={order.status || "pending"}
+                            onValueChange={(value: OrderStatus) =>
+                              handleStatusChange(order.id, value)
+                            }
+                          >
+                            <SelectTrigger className="w-[130px]">
+                              <Badge variant={getStatusBadgeVariant(order.status || "pending")}>
+                                {getStatusLabel(order.status || "pending")}
+                              </Badge>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="in-progress">In Progress</SelectItem>
+                              <SelectItem value="completed">Completed</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                         <TableCell>{formatDate(order.orderDate)}</TableCell>
                         <TableCell>{formatDate(order.deliveryDate)}</TableCell>
@@ -460,6 +528,26 @@ const Admin = () => {
                       <p className="font-medium">
                         {formatDate(selectedOrder.deliveryDate)}
                       </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Status</p>
+                      <Select
+                        value={selectedOrder.status || "pending"}
+                        onValueChange={(value: OrderStatus) =>
+                          handleStatusChange(selectedOrder.id, value)
+                        }
+                      >
+                        <SelectTrigger className="w-[140px] mt-1">
+                          <Badge variant={getStatusBadgeVariant(selectedOrder.status || "pending")}>
+                            {getStatusLabel(selectedOrder.status || "pending")}
+                          </Badge>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="in-progress">In Progress</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <p className="text-muted-foreground">
