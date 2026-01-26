@@ -1,0 +1,483 @@
+import { useState, useMemo } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Search, Eye, Trash2, ArrowLeft, Download } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  getAllOrders,
+  getOrdersByName,
+  getOrdersByEmail,
+  getOrdersByPhone,
+  deleteOrderById,
+  getOrderCount,
+  type OrderData,
+} from "@/lib/orderUtils";
+import { toast } from "@/hooks/use-toast";
+import * as XLSX from "xlsx";
+
+type SearchType = "all" | "name" | "email" | "phone";
+
+const Admin = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchType, setSearchType] = useState<SearchType>("all");
+  const [selectedOrder, setSelectedOrder] = useState<OrderData | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const orders = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return getAllOrders();
+    }
+
+    switch (searchType) {
+      case "name":
+        return getOrdersByName(searchQuery);
+      case "email":
+        return getOrdersByEmail(searchQuery);
+      case "phone":
+        return getOrdersByPhone(searchQuery);
+      case "all":
+      default:
+        const allOrders = getAllOrders();
+        const query = searchQuery.toLowerCase();
+        return allOrders.filter(
+          (order) =>
+            order.fullName.toLowerCase().includes(query) ||
+            order.email.toLowerCase().includes(query) ||
+            order.phone.includes(query) ||
+            order.id.toLowerCase().includes(query)
+        );
+    }
+  }, [searchQuery, searchType, refreshKey]);
+
+  const handleDelete = (orderId: string) => {
+    if (window.confirm("Are you sure you want to delete this order?")) {
+      const success = deleteOrderById(orderId);
+      if (success) {
+        toast({
+          title: "Order deleted",
+          description: "The order has been successfully deleted.",
+        });
+        setRefreshKey((prev) => prev + 1);
+        setSelectedOrder(null);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to delete the order.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleExport = () => {
+    const allOrders = getAllOrders();
+    if (allOrders.length === 0) {
+      toast({
+        title: "No orders to export",
+        description: "There are no orders in the database.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(allOrders);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+    const date = new Date().toISOString().split("T")[0];
+    XLSX.writeFile(workbook, `KarunaStitch_AllOrders_${date}.xlsx`);
+
+    toast({
+      title: "Export successful",
+      description: "Orders have been exported to Excel.",
+    });
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Link to="/">
+              <Button variant="outline" size="icon">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">
+                Order Management
+              </h1>
+              <p className="text-muted-foreground">
+                View and manage all customer orders
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <Badge variant="secondary" className="text-lg px-4 py-2">
+              {getOrderCount()} Orders
+            </Badge>
+            <Button onClick={handleExport} variant="outline">
+              <Download className="h-4 w-4 mr-2" />
+              Export All
+            </Button>
+          </div>
+        </div>
+
+        {/* Search Section */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg">Search Orders</CardTitle>
+            <CardDescription>
+              Find orders by customer name, email, phone, or order ID
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Select
+                value={searchType}
+                onValueChange={(value: SearchType) => setSearchType(value)}
+              >
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="Search by..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Fields</SelectItem>
+                  <SelectItem value="name">Name</SelectItem>
+                  <SelectItem value="email">Email</SelectItem>
+                  <SelectItem value="phone">Phone</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search orders..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Orders Table */}
+        <Card>
+          <CardContent className="p-0">
+            {orders.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">No orders found</p>
+                <p className="text-muted-foreground text-sm mt-2">
+                  {searchQuery
+                    ? "Try adjusting your search criteria"
+                    : "Orders will appear here once customers place them"}
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Order ID</TableHead>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Contact</TableHead>
+                      <TableHead>Blouse Type</TableHead>
+                      <TableHead>Order Date</TableHead>
+                      <TableHead>Delivery Date</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {orders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-mono text-sm">
+                          {order.id.slice(0, 8)}...
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {order.fullName}
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            <p>{order.email}</p>
+                            <p className="text-muted-foreground">
+                              {order.phone}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{order.blouseType}</Badge>
+                        </TableCell>
+                        <TableCell>{formatDate(order.orderDate)}</TableCell>
+                        <TableCell>{formatDate(order.deliveryDate)}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setSelectedOrder(order)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(order.id)}
+                              className="text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Order Details Dialog */}
+        <Dialog
+          open={!!selectedOrder}
+          onOpenChange={() => setSelectedOrder(null)}
+        >
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Order Details</DialogTitle>
+              <DialogDescription>
+                Order ID: {selectedOrder?.id}
+              </DialogDescription>
+            </DialogHeader>
+            {selectedOrder && (
+              <div className="space-y-6">
+                {/* Customer Info */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3">
+                    Customer Information
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">Name</p>
+                      <p className="font-medium">{selectedOrder.fullName}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Email</p>
+                      <p className="font-medium">{selectedOrder.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Phone</p>
+                      <p className="font-medium">{selectedOrder.phone}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Address */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3">
+                    Shipping Address
+                  </h3>
+                  <p className="text-sm">
+                    {selectedOrder.street}, {selectedOrder.city},{" "}
+                    {selectedOrder.state} {selectedOrder.zip},{" "}
+                    {selectedOrder.country}
+                  </p>
+                </div>
+
+                {/* Measurements */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3">Measurements</h3>
+                  <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">Back Length</p>
+                      <p className="font-medium">
+                        {selectedOrder.blouseBackLength}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Full Shoulder</p>
+                      <p className="font-medium">
+                        {selectedOrder.fullShoulder}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Shoulder Strap</p>
+                      <p className="font-medium">
+                        {selectedOrder.shoulderStrap}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Back Neck Depth</p>
+                      <p className="font-medium">
+                        {selectedOrder.backNeckDepth}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Front Neck Depth</p>
+                      <p className="font-medium">
+                        {selectedOrder.frontNeckDepth}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Shoulder to Apex</p>
+                      <p className="font-medium">
+                        {selectedOrder.shoulderToApex}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Front Length</p>
+                      <p className="font-medium">{selectedOrder.frontLength}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Chest</p>
+                      <p className="font-medium">{selectedOrder.chest}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Waist</p>
+                      <p className="font-medium">{selectedOrder.waist}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Sleeve Length</p>
+                      <p className="font-medium">
+                        {selectedOrder.sleeveLength}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Arm Round</p>
+                      <p className="font-medium">{selectedOrder.armRound}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Sleeve Round</p>
+                      <p className="font-medium">{selectedOrder.sleeveRound}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Arm Hole</p>
+                      <p className="font-medium">{selectedOrder.armHole}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Design Details */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3">Design Details</h3>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">Blouse Type</p>
+                      <p className="font-medium">{selectedOrder.blouseType}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Hook Position</p>
+                      <p className="font-medium">
+                        {selectedOrder.hookPosition}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Selected Design</p>
+                      <p className="font-medium">
+                        {selectedOrder.selectedDesign || "N/A"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">
+                        Extra Cloths/Laces
+                      </p>
+                      <p className="font-medium">
+                        {selectedOrder.extraClothsLaces || "None"}
+                      </p>
+                    </div>
+                  </div>
+                  {selectedOrder.designDescription && (
+                    <div className="mt-4">
+                      <p className="text-muted-foreground">
+                        Design Description
+                      </p>
+                      <p className="font-medium">
+                        {selectedOrder.designDescription}
+                      </p>
+                    </div>
+                  )}
+                  {selectedOrder.specialRequests && (
+                    <div className="mt-4">
+                      <p className="text-muted-foreground">Special Requests</p>
+                      <p className="font-medium">
+                        {selectedOrder.specialRequests}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Order Info */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3">Order Info</h3>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">Order Date</p>
+                      <p className="font-medium">
+                        {formatDate(selectedOrder.orderDate)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Delivery Date</p>
+                      <p className="font-medium">
+                        {formatDate(selectedOrder.deliveryDate)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">
+                        Measurement Help Requested
+                      </p>
+                      <p className="font-medium">
+                        {selectedOrder.wantMeasurementHelp ? "Yes" : "No"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>
+  );
+};
+
+export default Admin;
