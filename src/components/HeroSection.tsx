@@ -22,14 +22,14 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
         </div>
         <nav className="flex items-center gap-4 md:gap-6 text-sm font-medium text-muted-foreground">
           <a href="#how-it-works" className="hidden md:inline hover:text-primary transition-colors">How It Works</a>
-          <a href="#design" className="hidden md:inline hover:text-primary transition-colors">Design</a>
+          <a href="#design" className="hidden md:inline hover:text-primary transition-colors">Design your blouse</a>
           <a href="#impact" className="hidden md:inline hover:text-primary transition-colors">Our Impact</a>
           <Link 
             to="/admin" 
             className="flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors"
           >
             <ClipboardList className="h-4 w-4" />
-            <span className="hidden sm:inline">Orders</span>
+            <span className="hidden sm:inline">Review orders</span>
           </Link>
         </nav>
       </header>
