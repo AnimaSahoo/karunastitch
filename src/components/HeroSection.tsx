@@ -1,13 +1,25 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, ClipboardList } from "lucide-react";
+import { Heart, Sparkles, ClipboardList, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/blouse-beyond-logo.png";
 
 interface HeroSectionProps {
   onDesignClick: () => void;
 }
 
+const navLinks = [
+  { href: "#", label: "Home" },
+  { href: "#how-it-works", label: "How It Works" },
+  { href: "#order-form", label: "Place your order" },
+  { href: "#design", label: "Design your blouse" },
+  { href: "#impact", label: "Our Impact" },
+];
+
 export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <section className="relative min-h-[90vh] flex flex-col bg-gradient-to-br from-cream via-warm-white to-secondary overflow-hidden">
       {/* Header/Navigation */}
@@ -20,20 +32,66 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
             <span>Stitch</span>
           </span>
         </div>
-        <nav className="flex items-center gap-4 md:gap-6 text-sm font-medium text-muted-foreground">
-          <a href="#" className="hidden md:inline hover:text-primary transition-colors">Home</a>
-          <a href="#how-it-works" className="hidden md:inline hover:text-primary transition-colors">How It Works</a>
-          <a href="#order-form" className="hidden md:inline hover:text-primary transition-colors">Place your order</a>
-          <a href="#design" className="hidden md:inline hover:text-primary transition-colors">Design your blouse</a>
-          <a href="#impact" className="hidden md:inline hover:text-primary transition-colors">Our Impact</a>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-4 md:gap-6 text-sm font-medium text-muted-foreground">
+          {navLinks.map((link) => (
+            <a 
+              key={link.href} 
+              href={link.href} 
+              className="hover:text-primary transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
           <Link 
             to="/admin" 
             className="flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors"
           >
             <ClipboardList className="h-4 w-4" />
-            <span className="hidden sm:inline">Review orders</span>
+            <span>Review orders</span>
           </Link>
         </nav>
+
+        {/* Mobile Navigation */}
+        <div className="flex md:hidden items-center gap-2">
+          <Link 
+            to="/admin" 
+            className="flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors"
+          >
+            <ClipboardList className="h-5 w-5" />
+          </Link>
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-foreground">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[280px] bg-background">
+              <nav className="flex flex-col gap-4 mt-8">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2 border-b border-border"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+                <Link
+                  to="/admin"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-2 text-lg font-medium text-primary hover:text-primary/80 transition-colors py-2"
+                >
+                  <ClipboardList className="h-5 w-5" />
+                  Review orders
+                </Link>
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
       </header>
 
       {/* Decorative elements */}
