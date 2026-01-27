@@ -23,7 +23,7 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
         <nav className="flex items-center gap-4 md:gap-6 text-sm font-medium text-muted-foreground">
           <a href="#" className="hidden md:inline hover:text-primary transition-colors">Home</a>
           <a href="#how-it-works" className="hidden md:inline hover:text-primary transition-colors">How It Works</a>
-          <a href="#order" className="hidden md:inline hover:text-primary transition-colors">Place your order</a>
+          <a href="#order-form" className="hidden md:inline hover:text-primary transition-colors">Place your order</a>
           <a href="#design" className="hidden md:inline hover:text-primary transition-colors">Design your blouse</a>
           <a href="#impact" className="hidden md:inline hover:text-primary transition-colors">Our Impact</a>
           <Link 
