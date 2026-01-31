@@ -15,11 +15,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <HeroSection onDesignClick={scrollToOrderForm} />
+      <ImpactSection />
       <HowItWorksSection />
       <div ref={orderFormRef}>
         <BlouseOrderForm />
       </div>
-      <ImpactSection />
       <Footer />
     </div>
   );
