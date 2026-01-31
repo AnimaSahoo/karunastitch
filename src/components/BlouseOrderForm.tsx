@@ -18,7 +18,8 @@ import {
   X,
   CalendarIcon,
   Upload,
-  Loader2
+  Loader2,
+  CreditCard
 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -459,6 +460,27 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                   <Label htmlFor="extra-no" className="cursor-pointer">No</Label>
                 </div>
               </RadioGroup>
+            </CardContent>
+          </Card>
+
+          {/* Payment Option - Coming Soon */}
+          <Card className="shadow-gold border-border">
+            <CardHeader className="bg-muted/50">
+              <CardTitle className="flex items-center gap-2 text-muted-foreground">
+                <CreditCard className="h-5 w-5" />
+                Payment
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <div className="bg-primary/10 rounded-full p-4 mb-4">
+                  <CreditCard className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">Online Payment Coming Soon</h3>
+                <p className="text-muted-foreground max-w-md">
+                  We're working on integrating secure online payment options. For now, payment details will be shared after order confirmation.
+                </p>
+              </div>
             </CardContent>
           </Card>
 
