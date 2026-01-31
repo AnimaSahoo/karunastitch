@@ -263,11 +263,13 @@ export const clearCurrentOrder = (): void => {
 export const saveOrder = async (order: Omit<OrderData, "id" | "status">): Promise<OrderData | null> => {
   const dbOrder = appToDbOrder(order);
   
-  const { data, error } = await supabase
+  // Generate UUID client-side to avoid needing SELECT permission after insert
+  const orderId = crypto.randomUUID();
+  const orderWithId = { ...dbOrder, id: orderId };
+  
+  const { error } = await supabase
     .from("orders")
-    .insert(dbOrder)
-    .select()
-    .single();
+    .insert(orderWithId);
 
   if (error) {
     console.error("Error saving order:", error);
@@ -275,7 +277,12 @@ export const saveOrder = async (order: Omit<OrderData, "id" | "status">): Promis
     return null;
   }
 
-  return dbToAppOrder(data as DbOrder);
+  // Return the order data we already have (no need to read back from DB)
+  return {
+    ...order,
+    id: orderId,
+    status: 'pending' as OrderStatus
+  };
 };
 
 // Delete order by ID
