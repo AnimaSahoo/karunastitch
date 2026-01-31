@@ -473,10 +473,10 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
             </CardHeader>
             <CardContent className="p-6">
               <Tabs value={activeDesignTab} onValueChange={setActiveDesignTab}>
-                <TabsList className="grid w-full grid-cols-3 mb-6">
-                  <TabsTrigger value="sample">Sample Designs</TabsTrigger>
-                  <TabsTrigger value="sketch">Sketch Design</TabsTrigger>
-                  <TabsTrigger value="reference">Upload Reference</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-0 h-auto sm:h-10 mb-6">
+                  <TabsTrigger value="sample" className="py-2 sm:py-1">Sample Designs</TabsTrigger>
+                  <TabsTrigger value="sketch" className="py-2 sm:py-1">Sketch Design</TabsTrigger>
+                  <TabsTrigger value="reference" className="py-2 sm:py-1">Upload Reference</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="sample">

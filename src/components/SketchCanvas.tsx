@@ -424,90 +424,94 @@ export const SketchCanvas = ({ onSave, customerName = "" }: SketchCanvasProps) =
         </div>
       </div>
 
-      {/* Tools Panel */}
-      <div className="flex flex-wrap items-center gap-2 p-3 bg-muted/50 rounded-lg">
-        <div className="flex gap-1">
-          <Button
-            type="button"
-            variant={currentTool === "brush" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setCurrentTool("brush")}
-            title="Brush"
-          >
-            <Brush className="h-4 w-4" />
-          </Button>
-          <Button
-            type="button"
-            variant={currentTool === "eraser" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setCurrentTool("eraser")}
-            title="Eraser"
-          >
-            <Eraser className="h-4 w-4" />
-          </Button>
-          <Button
-            type="button"
-            variant={currentTool === "rectangle" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setCurrentTool("rectangle")}
-            title="Rectangle"
-          >
-            <Square className="h-4 w-4" />
-          </Button>
-          <Button
-            type="button"
-            variant={currentTool === "circle" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setCurrentTool("circle")}
-            title="Circle"
-          >
-            <Circle className="h-4 w-4" />
-          </Button>
-        </div>
-
-        <div className="h-6 w-px bg-border mx-2" />
-
-        {/* Color Palette */}
-        <div className="flex gap-1">
-          {colors.map((color) => (
-            <button
-              key={color}
+      {/* Tools Panel - Mobile Optimized */}
+      <div className="p-3 bg-muted/50 rounded-lg space-y-3">
+        {/* Row 1: Drawing Tools */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex gap-1">
+            <Button
               type="button"
-              onClick={() => setBrushColor(color)}
-              className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${
-                brushColor === color ? "border-primary ring-2 ring-primary/30" : "border-transparent"
-              }`}
-              style={{ backgroundColor: color }}
+              variant={currentTool === "brush" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setCurrentTool("brush")}
+              title="Brush"
+            >
+              <Brush className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant={currentTool === "eraser" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setCurrentTool("eraser")}
+              title="Eraser"
+            >
+              <Eraser className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant={currentTool === "rectangle" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setCurrentTool("rectangle")}
+              title="Rectangle"
+            >
+              <Square className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant={currentTool === "circle" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setCurrentTool("circle")}
+              title="Circle"
+            >
+              <Circle className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          {/* Actions - Right side */}
+          <div className="flex gap-1">
+            <Button type="button" variant="outline" size="sm" onClick={clearCanvas}>
+              <RotateCcw className="h-4 w-4" />
+              <span className="hidden sm:inline ml-1">Clear</span>
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={saveDesign}>
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline ml-1">Save</span>
+            </Button>
+          </div>
+        </div>
+
+        {/* Row 2: Color Palette and Brush Size */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Color Palette */}
+          <div className="flex gap-1 flex-wrap">
+            {colors.map((color) => (
+              <button
+                key={color}
+                type="button"
+                onClick={() => setBrushColor(color)}
+                className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${
+                  brushColor === color ? "border-primary ring-2 ring-primary/30" : "border-transparent"
+                }`}
+                style={{ backgroundColor: color }}
+              />
+            ))}
+          </div>
+
+          <div className="h-6 w-px bg-border hidden sm:block" />
+
+          {/* Brush Size */}
+          <div className="flex items-center gap-2 flex-1 min-w-[100px] max-w-[150px]">
+            <span className="text-xs text-muted-foreground whitespace-nowrap">Size</span>
+            <Slider
+              value={[brushSize]}
+              onValueChange={(v) => setBrushSize(v[0])}
+              min={1}
+              max={20}
+              step={1}
+              className="flex-1"
             />
-          ))}
+          </div>
         </div>
-
-        <div className="h-6 w-px bg-border mx-2" />
-
-        {/* Brush Size */}
-        <div className="flex items-center gap-2 min-w-[100px]">
-          <span className="text-xs text-muted-foreground">Size</span>
-          <Slider
-            value={[brushSize]}
-            onValueChange={(v) => setBrushSize(v[0])}
-            min={1}
-            max={20}
-            step={1}
-            className="w-16"
-          />
-        </div>
-
-        <div className="flex-1" />
-
-        {/* Actions */}
-        <Button type="button" variant="outline" size="sm" onClick={clearCanvas}>
-          <RotateCcw className="h-4 w-4 mr-1" />
-          Clear
-        </Button>
-        <Button type="button" variant="outline" size="sm" onClick={saveDesign}>
-          <Download className="h-4 w-4 mr-1" />
-          Save
-        </Button>
       </div>
 
       {/* Front/Back Tabs */}
