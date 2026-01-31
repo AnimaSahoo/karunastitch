@@ -26,10 +26,10 @@ export const Footer = () => {
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           {/* Brand */}
           <div>
-            <h3 className="text-2xl font-bold mb-4">
-              <span className="text-primary-foreground">Karuna</span>
+            <h3 className="text-2xl mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <span className="text-primary-foreground font-bold">Karuna</span>
               <span className="text-accent"> </span>
-              <span>Stitch</span>
+              <span className="font-semibold">Stitch</span>
             </h3>
             <p className="text-muted opacity-80 text-sm leading-relaxed">
               Custom saree blouses stitched with dignity & care. 

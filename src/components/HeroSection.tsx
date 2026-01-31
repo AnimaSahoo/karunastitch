@@ -42,10 +42,10 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
       >
         <div className="flex items-center gap-3">
           <img src={logo} alt="Karuna Stitch" className="h-12 w-auto" />
-          <span className="text-xl font-semibold text-foreground hidden sm:inline">
-            <span className="text-primary">Karuna</span>
+          <span className="text-xl text-foreground hidden sm:inline" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <span className="text-primary font-semibold">Karuna</span>
             <span className="text-accent"> </span>
-            <span>Stitch</span>
+            <span className="font-medium">Stitch</span>
           </span>
         </div>
 
@@ -131,10 +131,10 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           </div>
           
           {/* Brand Name */}
-          <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tight">
-            <span className="text-primary">Karuna</span>
+          <h1 className="text-5xl md:text-7xl mb-4 tracking-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <span className="text-primary font-bold">Karuna</span>
             <span className="text-accent"> </span>
-            <span className="text-foreground">Stitch</span>
+            <span className="text-foreground font-semibold">Stitch</span>
           </h1>
           
           {/* Tagline */}
