@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Palette, Check } from "lucide-react";
+import { Shirt, Check } from "lucide-react";
 
 interface Design {
   id: string;
@@ -83,8 +83,8 @@ export const DesignGallery = ({ onSelectDesign, selectedDesign }: DesignGalleryP
     <Card className="w-full max-w-6xl mx-auto shadow-elegant">
       <CardHeader className="bg-gradient-gold text-foreground">
         <CardTitle className="flex items-center gap-2 text-2xl">
-          <Palette className="h-6 w-6" />
-          Choose Your Design
+          <Shirt className="h-6 w-6" />
+          Blouse Design
         </CardTitle>
         <p className="text-base opacity-90">
           Select from our collection of beautiful blouse designs or continue to create your custom design
