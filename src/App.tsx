@@ -9,6 +9,7 @@ import Checkout from "./pages/Checkout";
 import Admin from "./pages/Admin";
 import AdminFeedback from "./pages/AdminFeedback";
 import AdminLogin from "./pages/AdminLogin";
+import ResetPassword from "./pages/ResetPassword";
 import Feedback from "./pages/Feedback";
 import NotFound from "./pages/NotFound";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route
               path="/admin"
               element={
