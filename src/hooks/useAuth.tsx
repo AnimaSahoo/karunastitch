@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 interface AuthContextType {
   user: User | null;
@@ -30,13 +31,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .maybeSingle();
 
       if (error) {
-        console.error('Error checking admin role:', error);
+        logger.error('checkAdminRole', error);
         return false;
       }
 
       return !!data;
     } catch (error) {
-      console.error('Error checking admin role:', error);
+      logger.error('checkAdminRole', error);
       return false;
     }
   };

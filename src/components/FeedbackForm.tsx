@@ -8,6 +8,7 @@ import { Star, MessageSquare, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { logger } from "@/lib/logger";
 
 interface FeedbackFormProps {
   orderId?: string;
@@ -104,7 +105,7 @@ export const FeedbackForm = ({
       setIsSubmitted(true);
       onSubmitSuccess?.();
     } catch (error) {
-      console.error("Error submitting feedback:", error);
+      logger.error("FeedbackForm.submit", error);
       toast.error("Failed to submit feedback. Please try again.");
     } finally {
       setIsSubmitting(false);

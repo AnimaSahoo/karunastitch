@@ -24,6 +24,20 @@ const getCorsHeaders = (origin: string | null) => {
   };
 };
 
+// HTML escape function to prevent XSS in email templates
+const escapeHtml = (text: string | null | undefined): string => {
+  if (!text) return '';
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;',
+    '/': '&#x2F;',
+  };
+  return String(text).replace(/[&<>"'/]/g, (m) => map[m]);
+};
+
 interface AdminNotificationRequest {
   orderId: string;
 }
@@ -45,7 +59,6 @@ const checkRateLimit = async (
     .limit(1);
 
   if (error) {
-    console.error("Rate limit check error:", error);
     // Allow on error to not block legitimate requests
     return { allowed: true };
   }
@@ -110,7 +123,6 @@ const handler = async (req: Request): Promise<Response> => {
       .single();
 
     if (orderError || !order) {
-      console.error("Order not found:", orderId, orderError);
       return new Response(
         JSON.stringify({ success: false, error: "Order not found" }),
         { status: 404, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -123,7 +135,6 @@ const handler = async (req: Request): Promise<Response> => {
     const minutesSinceCreation = (now.getTime() - createdAt.getTime()) / (1000 * 60);
     
     if (minutesSinceCreation > 5) {
-      console.warn("Attempted to send notification for old order:", orderId);
       return new Response(
         JSON.stringify({ success: false, error: "Notification can only be sent for recent orders" }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -137,6 +148,34 @@ const handler = async (req: Request): Promise<Response> => {
       hour: "2-digit",
       minute: "2-digit",
     });
+
+    // Escape all user-provided data for HTML safety
+    const safeFullName = escapeHtml(order.full_name);
+    const safeEmail = escapeHtml(order.email);
+    const safePhone = escapeHtml(order.phone);
+    const safeBlouseType = escapeHtml(order.blouse_type);
+    const safeDeliveryDate = escapeHtml(order.delivery_date);
+    const safeHookPosition = escapeHtml(order.hook_position);
+    const safeExtraClothsLaces = escapeHtml(order.extra_cloths_laces);
+    const safeSpecialRequests = escapeHtml(order.special_requests);
+    const safeChest = escapeHtml(order.chest);
+    const safeWaist = escapeHtml(order.waist);
+    const safeFullShoulder = escapeHtml(order.full_shoulder);
+    const safeShoulderStrap = escapeHtml(order.shoulder_strap);
+    const safeBlouseBackLength = escapeHtml(order.blouse_back_length);
+    const safeFrontLength = escapeHtml(order.front_length);
+    const safeBackNeckDepth = escapeHtml(order.back_neck_depth);
+    const safeFrontNeckDepth = escapeHtml(order.front_neck_depth);
+    const safeShoulderToApex = escapeHtml(order.shoulder_to_apex);
+    const safeSleeveLength = escapeHtml(order.sleeve_length);
+    const safeArmRound = escapeHtml(order.arm_round);
+    const safeSleeveRound = escapeHtml(order.sleeve_round);
+    const safeArmHole = escapeHtml(order.arm_hole);
+    const safeStreet = escapeHtml(order.street);
+    const safeCity = escapeHtml(order.city);
+    const safeState = escapeHtml(order.state);
+    const safeZip = escapeHtml(order.zip);
+    const safeCountry = escapeHtml(order.country);
 
     const emailResponse = await resend.emails.send({
       from: "Blouse & Beyond <noreply@blouseandbeyond.lovable.app>",
@@ -181,15 +220,15 @@ const handler = async (req: Request): Promise<Response> => {
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #666; font-size: 14px;">Customer Name</td>
-                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${order.full_name}</td>
+                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${safeFullName}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #666; font-size: 14px;">Email</td>
-                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${order.email}</td>
+                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${safeEmail}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #666; font-size: 14px;">Phone</td>
-                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${order.phone}</td>
+                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${safePhone}</td>
                   </tr>
                 </table>
               </div>
@@ -201,24 +240,24 @@ const handler = async (req: Request): Promise<Response> => {
                 <table style="width: 100%; border-collapse: collapse;">
                   <tr>
                     <td style="padding: 8px 0; color: #666; font-size: 14px;">Blouse Type</td>
-                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${order.blouse_type || "Not specified"}</td>
+                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${safeBlouseType || "Not specified"}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #666; font-size: 14px;">Expected Delivery</td>
-                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${order.delivery_date || "To be confirmed"}</td>
+                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${safeDeliveryDate || "To be confirmed"}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #666; font-size: 14px;">Hook Position</td>
-                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${order.hook_position || "Not specified"}</td>
+                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${safeHookPosition || "Not specified"}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px 0; color: #666; font-size: 14px;">Extra Cloths/Laces</td>
-                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${order.extra_cloths_laces || "No"}</td>
+                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${safeExtraClothsLaces || "No"}</td>
                   </tr>
-                  ${order.special_requests ? `
+                  ${safeSpecialRequests ? `
                   <tr>
                     <td style="padding: 8px 0; color: #666; font-size: 14px;">Special Requests</td>
-                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${order.special_requests}</td>
+                    <td style="padding: 8px 0; color: #333; font-size: 14px; text-align: right;">${safeSpecialRequests}</td>
                   </tr>
                   ` : ""}
                 </table>
@@ -229,19 +268,19 @@ const handler = async (req: Request): Promise<Response> => {
                 <h3 style="color: #1565c0; font-size: 16px; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 1px;">Measurements</h3>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                  ${order.chest ? `<div style="font-size: 13px;"><span style="color: #666;">Chest:</span> <strong>${order.chest}</strong></div>` : ""}
-                  ${order.waist ? `<div style="font-size: 13px;"><span style="color: #666;">Waist:</span> <strong>${order.waist}</strong></div>` : ""}
-                  ${order.full_shoulder ? `<div style="font-size: 13px;"><span style="color: #666;">Full Shoulder:</span> <strong>${order.full_shoulder}</strong></div>` : ""}
-                  ${order.shoulder_strap ? `<div style="font-size: 13px;"><span style="color: #666;">Shoulder Strap:</span> <strong>${order.shoulder_strap}</strong></div>` : ""}
-                  ${order.blouse_back_length ? `<div style="font-size: 13px;"><span style="color: #666;">Back Length:</span> <strong>${order.blouse_back_length}</strong></div>` : ""}
-                  ${order.front_length ? `<div style="font-size: 13px;"><span style="color: #666;">Front Length:</span> <strong>${order.front_length}</strong></div>` : ""}
-                  ${order.back_neck_depth ? `<div style="font-size: 13px;"><span style="color: #666;">Back Neck Depth:</span> <strong>${order.back_neck_depth}</strong></div>` : ""}
-                  ${order.front_neck_depth ? `<div style="font-size: 13px;"><span style="color: #666;">Front Neck Depth:</span> <strong>${order.front_neck_depth}</strong></div>` : ""}
-                  ${order.shoulder_to_apex ? `<div style="font-size: 13px;"><span style="color: #666;">Shoulder to Apex:</span> <strong>${order.shoulder_to_apex}</strong></div>` : ""}
-                  ${order.sleeve_length ? `<div style="font-size: 13px;"><span style="color: #666;">Sleeve Length:</span> <strong>${order.sleeve_length}</strong></div>` : ""}
-                  ${order.arm_round ? `<div style="font-size: 13px;"><span style="color: #666;">Arm Round:</span> <strong>${order.arm_round}</strong></div>` : ""}
-                  ${order.sleeve_round ? `<div style="font-size: 13px;"><span style="color: #666;">Sleeve Round:</span> <strong>${order.sleeve_round}</strong></div>` : ""}
-                  ${order.arm_hole ? `<div style="font-size: 13px;"><span style="color: #666;">Arm Hole:</span> <strong>${order.arm_hole}</strong></div>` : ""}
+                  ${safeChest ? `<div style="font-size: 13px;"><span style="color: #666;">Chest:</span> <strong>${safeChest}</strong></div>` : ""}
+                  ${safeWaist ? `<div style="font-size: 13px;"><span style="color: #666;">Waist:</span> <strong>${safeWaist}</strong></div>` : ""}
+                  ${safeFullShoulder ? `<div style="font-size: 13px;"><span style="color: #666;">Full Shoulder:</span> <strong>${safeFullShoulder}</strong></div>` : ""}
+                  ${safeShoulderStrap ? `<div style="font-size: 13px;"><span style="color: #666;">Shoulder Strap:</span> <strong>${safeShoulderStrap}</strong></div>` : ""}
+                  ${safeBlouseBackLength ? `<div style="font-size: 13px;"><span style="color: #666;">Back Length:</span> <strong>${safeBlouseBackLength}</strong></div>` : ""}
+                  ${safeFrontLength ? `<div style="font-size: 13px;"><span style="color: #666;">Front Length:</span> <strong>${safeFrontLength}</strong></div>` : ""}
+                  ${safeBackNeckDepth ? `<div style="font-size: 13px;"><span style="color: #666;">Back Neck Depth:</span> <strong>${safeBackNeckDepth}</strong></div>` : ""}
+                  ${safeFrontNeckDepth ? `<div style="font-size: 13px;"><span style="color: #666;">Front Neck Depth:</span> <strong>${safeFrontNeckDepth}</strong></div>` : ""}
+                  ${safeShoulderToApex ? `<div style="font-size: 13px;"><span style="color: #666;">Shoulder to Apex:</span> <strong>${safeShoulderToApex}</strong></div>` : ""}
+                  ${safeSleeveLength ? `<div style="font-size: 13px;"><span style="color: #666;">Sleeve Length:</span> <strong>${safeSleeveLength}</strong></div>` : ""}
+                  ${safeArmRound ? `<div style="font-size: 13px;"><span style="color: #666;">Arm Round:</span> <strong>${safeArmRound}</strong></div>` : ""}
+                  ${safeSleeveRound ? `<div style="font-size: 13px;"><span style="color: #666;">Sleeve Round:</span> <strong>${safeSleeveRound}</strong></div>` : ""}
+                  ${safeArmHole ? `<div style="font-size: 13px;"><span style="color: #666;">Arm Hole:</span> <strong>${safeArmHole}</strong></div>` : ""}
                 </div>
                 
                 ${order.want_measurement_help ? `
@@ -252,13 +291,13 @@ const handler = async (req: Request): Promise<Response> => {
               </div>
               
               <!-- Address -->
-              ${order.street || order.city || order.state ? `
+              ${safeStreet || safeCity || safeState ? `
               <div style="background-color: #f3e5f5; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
                 <h3 style="color: #7b1fa2; font-size: 16px; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 1px;">Delivery Address</h3>
                 <p style="color: #333; font-size: 14px; margin: 0; line-height: 1.6;">
-                  ${order.street || ""}${order.street ? "<br>" : ""}
-                  ${order.city || ""}${order.city && order.state ? ", " : ""}${order.state || ""} ${order.zip || ""}
-                  ${order.country ? `<br>${order.country}` : ""}
+                  ${safeStreet || ""}${safeStreet ? "<br>" : ""}
+                  ${safeCity || ""}${safeCity && safeState ? ", " : ""}${safeState || ""} ${safeZip || ""}
+                  ${safeCountry ? `<br>${safeCountry}` : ""}
                 </p>
               </div>
               ` : ""}
@@ -287,8 +326,6 @@ const handler = async (req: Request): Promise<Response> => {
     // Log successful email send for rate limiting
     await logEmailSend(supabase, orderId, "send-admin-notification");
 
-    console.log("Admin notification email sent successfully:", emailResponse);
-
     return new Response(JSON.stringify({ success: true, data: emailResponse }), {
       status: 200,
       headers: {
@@ -298,7 +335,6 @@ const handler = async (req: Request): Promise<Response> => {
     });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.error("Error in send-admin-notification function:", error);
     return new Response(
       JSON.stringify({ success: false, error: errorMessage }),
       {
