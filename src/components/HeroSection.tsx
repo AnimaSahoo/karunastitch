@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, ClipboardList, Menu } from "lucide-react";
+import { Heart, Sparkles, ClipboardList, Menu, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/blouse-beyond-logo.png";
 
 interface HeroSectionProps {
@@ -20,6 +21,7 @@ const navLinks = [
 export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,6 +69,15 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
             <ClipboardList className="h-4 w-4" />
             <span>Review orders</span>
           </Link>
+          {isAdmin && (
+            <Link 
+              to="/admin/feedback" 
+              className="flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors"
+            >
+              <MessageSquare className="h-4 w-4" />
+              <span>View Feedback</span>
+            </Link>
+          )}
         </nav>
 
         {/* Mobile Navigation */}
@@ -104,6 +115,16 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
                   <ClipboardList className="h-5 w-5" />
                   Review orders
                 </Link>
+                {isAdmin && (
+                  <Link
+                    to="/admin/feedback"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-2 text-lg font-medium text-primary hover:text-primary/80 transition-colors py-2"
+                  >
+                    <MessageSquare className="h-5 w-5" />
+                    View Feedback
+                  </Link>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
