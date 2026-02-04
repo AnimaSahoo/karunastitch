@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 export type OrderStatus = "pending" | "in-progress" | "completed";
 
@@ -154,7 +155,7 @@ export const getAllOrders = async (): Promise<OrderData[]> => {
     .order("order_date", { ascending: false });
 
   if (error) {
-    console.error("Error fetching orders:", error);
+    logger.error("getAllOrders", error);
     return [];
   }
 
@@ -170,7 +171,7 @@ export const getOrderById = async (orderId: string): Promise<OrderData | null> =
     .maybeSingle();
 
   if (error || !data) {
-    console.error("Error fetching order:", error);
+    logger.error("getOrderById", error);
     return null;
   }
 
@@ -188,7 +189,7 @@ export const searchOrders = async (query: string): Promise<OrderData[]> => {
     .order("order_date", { ascending: false });
 
   if (error) {
-    console.error("Error searching orders:", error);
+    logger.error("searchOrders", error);
     return [];
   }
 
@@ -204,7 +205,7 @@ export const getOrdersByPhone = async (phone: string): Promise<OrderData[]> => {
     .order("order_date", { ascending: false });
 
   if (error) {
-    console.error("Error fetching orders by phone:", error);
+    logger.error("getOrdersByPhone", error);
     return [];
   }
 
@@ -220,7 +221,7 @@ export const getOrdersByEmail = async (email: string): Promise<OrderData[]> => {
     .order("order_date", { ascending: false });
 
   if (error) {
-    console.error("Error fetching orders by email:", error);
+    logger.error("getOrdersByEmail", error);
     return [];
   }
 
@@ -236,7 +237,7 @@ export const getOrdersByName = async (name: string): Promise<OrderData[]> => {
     .order("order_date", { ascending: false });
 
   if (error) {
-    console.error("Error fetching orders by name:", error);
+    logger.error("getOrdersByName", error);
     return [];
   }
 
@@ -272,8 +273,7 @@ export const saveOrder = async (order: Omit<OrderData, "id" | "status">): Promis
     .insert(orderWithId);
 
   if (error) {
-    console.error("Error saving order:", error);
-    console.error("Error details:", JSON.stringify(error, null, 2));
+    logger.error("saveOrder", error);
     return null;
   }
 
@@ -293,7 +293,7 @@ export const deleteOrderById = async (orderId: string): Promise<boolean> => {
     .eq("id", orderId);
 
   if (error) {
-    console.error("Error deleting order:", error);
+    logger.error("deleteOrderById", error);
     return false;
   }
 
@@ -308,7 +308,7 @@ export const updateOrderStatus = async (orderId: string, status: OrderStatus): P
     .eq("id", orderId);
 
   if (error) {
-    console.error("Error updating order status:", error);
+    logger.error("updateOrderStatus", error);
     return false;
   }
 
@@ -324,7 +324,7 @@ export const getOrdersByStatus = async (status: OrderStatus): Promise<OrderData[
     .order("order_date", { ascending: false });
 
   if (error) {
-    console.error("Error fetching orders by status:", error);
+    logger.error("getOrdersByStatus", error);
     return [];
   }
 
@@ -338,7 +338,7 @@ export const getOrderCount = async (): Promise<number> => {
     .select("*", { count: "exact", head: true });
 
   if (error) {
-    console.error("Error getting order count:", error);
+    logger.error("getOrderCount", error);
     return 0;
   }
 

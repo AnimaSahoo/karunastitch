@@ -34,6 +34,7 @@ import {
   checkHoneypot,
   sanitizeInput 
 } from "@/lib/orderValidation";
+import { logger } from "@/lib/logger";
 
 // Import sample blouse images
 import blouseBoatNeck from "@/assets/blouse-boat-neck.jpg";
@@ -160,8 +161,8 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     
     // Anti-bot check 1: Honeypot field should be empty
     if (!checkHoneypot(honeypot)) {
-      console.warn("Honeypot triggered - potential bot submission");
-      // Silently fail for bots
+      // Silently fail for bots - intentional security logging kept
+      logger.warn("BlouseOrderForm", "Honeypot triggered - potential bot submission");
       toast.success("Order placed successfully!");
       return;
     }
@@ -169,7 +170,8 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     // Anti-bot check 2: Form filled too quickly (less than 5 seconds)
     const timeSpent = Date.now() - formStartTime.current;
     if (timeSpent < 5000) {
-      console.warn("Form submitted too quickly - potential bot");
+      // Intentional security logging kept
+      logger.warn("BlouseOrderForm", "Form submitted too quickly - potential bot");
       toast.error("Please take your time to fill out the form carefully.");
       return;
     }
@@ -248,7 +250,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
             });
             
             if (customerEmailError) {
-              console.error("Failed to send customer confirmation email:", customerEmailError);
+              logger.error("BlouseOrderForm.sendCustomerEmail", customerEmailError);
             }
 
             // Send admin notification email
@@ -259,10 +261,10 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
             });
             
             if (adminEmailError) {
-              console.error("Failed to send admin notification email:", adminEmailError);
+              logger.error("BlouseOrderForm.sendAdminEmail", adminEmailError);
             }
           } catch (emailError) {
-            console.error("Email sending error:", emailError);
+            logger.error("BlouseOrderForm.emailSending", emailError);
             // Don't block the order flow if email fails
           }
         }
@@ -273,12 +275,11 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
         // Navigate to checkout page
         navigate("/checkout");
       } else {
-        toast.error("Failed to save order. Check console for details.");
+        toast.error("Failed to save order. Please try again.");
       }
     } catch (error) {
-      console.error("Error saving order:", error);
-      console.error("Error details:", error);
-      toast.error(`Failed to save order: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      logger.error("BlouseOrderForm.submit", error);
+      toast.error("Failed to save order. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

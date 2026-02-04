@@ -49,6 +49,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import * as XLSX from "xlsx";
+import { logger } from "@/lib/logger";
 
 type SearchType = "all" | "name" | "email" | "phone" | "orderId" | "blouseType";
 
@@ -89,7 +90,7 @@ const Admin = () => {
       const count = await getOrderCount();
       setOrderCount(count);
     } catch (error) {
-      console.error("Error loading orders:", error);
+      logger.error("Admin.loadOrders", error);
       toast({
         title: "Error",
         description: "Failed to load orders.",
@@ -151,7 +152,7 @@ const Admin = () => {
 
       setOrders(results);
     } catch (error) {
-      console.error("Error searching orders:", error);
+      logger.error("Admin.handleSearch", error);
       toast({
         title: "Error",
         description: "Failed to search orders.",

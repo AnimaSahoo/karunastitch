@@ -22,6 +22,20 @@ const getCorsHeaders = (origin: string | null) => {
   };
 };
 
+// HTML escape function to prevent XSS in email templates
+const escapeHtml = (text: string | null | undefined): string => {
+  if (!text) return '';
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;',
+    '/': '&#x2F;',
+  };
+  return String(text).replace(/[&<>"'/]/g, (m) => map[m]);
+};
+
 interface OrderConfirmationRequest {
   orderId: string;
 }
@@ -43,7 +57,6 @@ const checkRateLimit = async (
     .limit(1);
 
   if (error) {
-    console.error("Rate limit check error:", error);
     // Allow on error to not block legitimate requests
     return { allowed: true };
   }
@@ -108,7 +121,6 @@ const handler = async (req: Request): Promise<Response> => {
       .single();
 
     if (orderError || !order) {
-      console.error("Order not found:", orderId, orderError);
       return new Response(
         JSON.stringify({ success: false, error: "Order not found" }),
         { status: 404, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -121,7 +133,6 @@ const handler = async (req: Request): Promise<Response> => {
     const minutesSinceCreation = (now.getTime() - createdAt.getTime()) / (1000 * 60);
     
     if (minutesSinceCreation > 5) {
-      console.warn("Attempted to send confirmation for old order:", orderId);
       return new Response(
         JSON.stringify({ success: false, error: "Confirmation email can only be sent for recent orders" }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -130,9 +141,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Use email from database (not from request) to prevent spoofing
     const customerEmail = order.email;
-    const customerName = order.full_name;
-    const blouseType = order.blouse_type;
-    const deliveryDate = order.delivery_date;
+    const customerName = escapeHtml(order.full_name);
+    const blouseType = escapeHtml(order.blouse_type);
+    const deliveryDate = escapeHtml(order.delivery_date);
     const orderDate = order.order_date;
 
     if (!customerEmail) {
@@ -148,9 +159,7 @@ const handler = async (req: Request): Promise<Response> => {
       day: "numeric",
     });
 
-    const formattedDeliveryDate = deliveryDate 
-      ? deliveryDate
-      : "To be confirmed";
+    const formattedDeliveryDate = deliveryDate || "To be confirmed";
 
     const emailResponse = await resend.emails.send({
       from: "Blouse & Beyond <noreply@blouseandbeyond.lovable.app>",
@@ -241,8 +250,6 @@ const handler = async (req: Request): Promise<Response> => {
     // Log successful email send for rate limiting
     await logEmailSend(supabase, orderId, "send-order-confirmation");
 
-    console.log("Order confirmation email sent successfully:", emailResponse);
-
     return new Response(JSON.stringify({ success: true, data: emailResponse }), {
       status: 200,
       headers: {
@@ -252,7 +259,6 @@ const handler = async (req: Request): Promise<Response> => {
     });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.error("Error in send-order-confirmation function:", error);
     return new Response(
       JSON.stringify({ success: false, error: errorMessage }),
       {

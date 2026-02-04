@@ -6,6 +6,7 @@ import { CheckCircle, Download, ArrowLeft, ShoppingBag, Loader2, MessageSquare }
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
 import { getCurrentOrder, getAllOrders, type OrderData } from "@/lib/orderUtils";
+import { logger } from "@/lib/logger";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ const Checkout = () => {
       XLSX.writeFile(workbook, fileName);
       toast.success("Excel file downloaded successfully!");
     } catch (error) {
-      console.error("Error exporting orders:", error);
+      logger.error("Checkout.exportToExcel", error);
       toast.error("Failed to export orders");
     } finally {
       setIsExporting(false);

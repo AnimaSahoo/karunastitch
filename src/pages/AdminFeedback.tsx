@@ -21,6 +21,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import * as XLSX from "xlsx";
+import { logger } from "@/lib/logger";
 
 interface FeedbackData {
   id: string;
@@ -52,7 +53,7 @@ const AdminFeedback = () => {
 
       setFeedback(data || []);
     } catch (error) {
-      console.error("Error loading feedback:", error);
+      logger.error("AdminFeedback.loadFeedback", error);
       toast({
         title: "Error",
         description: "Failed to load feedback. Make sure you have admin access.",
