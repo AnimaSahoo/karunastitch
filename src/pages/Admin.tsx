@@ -31,7 +31,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Search, Eye, Trash2, ArrowLeft, Download, Loader2, LogOut } from "lucide-react";
+import { Search, Eye, Trash2, ArrowLeft, Download, Loader2, LogOut, MessageSquare } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   getAllOrders,
@@ -298,6 +298,12 @@ const Admin = () => {
             <Badge variant="secondary" className="text-lg px-4 py-2">
               {orderCount} Orders
             </Badge>
+            <Link to="/admin/feedback">
+              <Button variant="outline">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                View Feedback
+              </Button>
+            </Link>
             <Button onClick={handleExport} variant="outline">
               <Download className="h-4 w-4 mr-2" />
               Export All

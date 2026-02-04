@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Checkout from "./pages/Checkout";
 import Admin from "./pages/Admin";
+import AdminFeedback from "./pages/AdminFeedback";
 import AdminLogin from "./pages/AdminLogin";
 import Feedback from "./pages/Feedback";
 import NotFound from "./pages/NotFound";
@@ -30,6 +31,14 @@ const App = () => (
               element={
                 <ProtectedAdminRoute>
                   <Admin />
+                </ProtectedAdminRoute>
+              }
+            />
+            <Route
+              path="/admin/feedback"
+              element={
+                <ProtectedAdminRoute>
+                  <AdminFeedback />
                 </ProtectedAdminRoute>
               }
             />
