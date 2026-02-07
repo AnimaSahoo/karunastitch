@@ -147,17 +147,7 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
 
       <div className="container mx-auto px-4 py-16 relative z-10 flex-1 flex items-center">
         <div className="max-w-2xl">
-          {/* Brand Badge */}
-          <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm text-primary px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in">
-            <Sparkles className="h-4 w-4" />
-            Empowering Women Artisans in Odisha
-          </div>
 
-          {/* Logo in Hero */}
-          <div className="flex mb-6">
-            <img src={logo} alt="Karuna Stitch" className="h-24 md:h-32 w-auto" />
-          </div>
-          
           {/* Brand Name */}
           <h1 className="text-5xl md:text-7xl mb-4 tracking-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
             <span className="text-primary font-bold">Karuna</span>
