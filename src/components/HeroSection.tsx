@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/blouse-beyond-logo.png";
+import heroImage from "@/assets/hero-image.jpg";
 
 interface HeroSectionProps {
   onDesignClick: () => void;
@@ -33,7 +34,17 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
   }, []);
 
   return (
-    <section className="relative min-h-[90vh] flex flex-col bg-gradient-to-br from-cream via-warm-white to-secondary overflow-hidden">
+    <section className="relative min-h-[90vh] flex flex-col overflow-hidden">
+      {/* Hero Background Image */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src={heroImage} 
+          alt="Beautifully crafted saree blouses with traditional Indian embroidery" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/40" />
+      </div>
+
       {/* Header/Navigation */}
       <header 
         className={`fixed top-0 left-0 right-0 w-full py-4 px-6 flex items-center justify-between z-50 transition-all duration-300 ${
@@ -134,20 +145,16 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
       {/* Spacer for fixed header */}
       <div className="h-16" />
 
-      {/* Decorative elements */}
-      <div className="absolute top-20 left-10 w-32 h-32 bg-accent/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-48 h-48 bg-primary/10 rounded-full blur-3xl" />
-      
       <div className="container mx-auto px-4 py-16 relative z-10 flex-1 flex items-center">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-2xl">
           {/* Brand Badge */}
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in">
+          <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm text-primary px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in">
             <Sparkles className="h-4 w-4" />
             Empowering Women Artisans in Odisha
           </div>
 
           {/* Logo in Hero */}
-          <div className="flex justify-center mb-6">
+          <div className="flex mb-6">
             <img src={logo} alt="Karuna Stitch" className="h-24 md:h-32 w-auto" />
           </div>
           
@@ -164,12 +171,12 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           </p>
           
           {/* Intro Text */}
-          <div className="max-w-2xl mx-auto space-y-4 mb-10">
+          <div className="max-w-xl space-y-4 mb-10">
             <p className="text-lg text-muted-foreground leading-relaxed">
               Beautiful custom blouses handcrafted by skilled artisans in Odisha, India. 
               Every stitch supports differently-abled women in building sustainable livelihoods.
             </p>
-            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Heart className="h-4 w-4 text-primary" />
                 Social Impact
