@@ -149,10 +149,9 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
         <div className="max-w-2xl">
 
           {/* Brand Name */}
-          <h1 className="mb-4 tracking-tight">
-            <span className="text-primary font-bold">Karuna</span>
-            <span className="text-accent"> </span>
-            <span className="text-foreground font-semibold">Stitch</span>
+          <h1 className="mb-4" style={{ fontSize: '54px', letterSpacing: '0.5px', lineHeight: 1.1 }}>
+            <span className="text-primary font-semibold">Karuna</span>
+            <span className="text-foreground font-normal"> Stitch</span>
           </h1>
           
           {/* Tagline */}
