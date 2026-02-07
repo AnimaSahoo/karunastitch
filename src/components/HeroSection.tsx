@@ -159,9 +159,7 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           <p className="text-2xl md:text-3xl font-light text-muted-foreground mb-3">
             Custom Saree Blouses Designed to Fit You Perfectly
           </p>
-          <p className="text-lg md:text-xl font-medium text-primary/80 mb-6">
-            Custom Saree Blouses Designed to Fit You Perfectly
-          </p>
+          
           
           {/* Intro Text */}
           <div className="max-w-xl space-y-4 mb-10">
