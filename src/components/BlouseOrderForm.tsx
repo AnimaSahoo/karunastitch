@@ -41,7 +41,7 @@ import blouseBoatNeck from "@/assets/blouse-boat-neck.jpg";
 import blouseCollar from "@/assets/blouse-collar.jpg";
 import blousePataDesign from "@/assets/blouse-pata-design.png";
 import blouseWindowDesign from "@/assets/blouse-window-design.png";
-import measurementGuide from "@/assets/measurement-guide.jpg";
+import measurementGuide from "@/assets/measurement-guide-new.png";
 
 interface BlouseOrderFormProps {
   onSubmit?: () => void;
@@ -59,19 +59,16 @@ interface FormData {
   zip: string;
   country: string;
   // Measurements (matching guide image 1-13)
-  blouseBackLength: string;      // 1
-  fullShoulder: string;          // 2
-  shoulderStrap: string;         // 3
-  backNeckDepth: string;         // 4
-  frontNeckDepth: string;        // 5
-  shoulderToApex: string;        // 6
-  frontLength: string;           // 7
-  chest: string;                 // 8
-  waist: string;                 // 9
-  sleeveLength: string;          // 10
-  armRound: string;              // 11
-  sleeveRound: string;           // 12
-  armHole: string;               // 13
+  shoulder: string;              // 1
+  shoulderFullLength: string;    // 2
+  frontNeckDepth: string;        // 3
+  chest: string;                 // 4
+  waist: string;                 // 5
+  backNeckDepth: string;         // 6
+  blouseLength: string;          // 7
+  sleeveLength: string;          // 8
+  sleeveRound: string;           // 9
+  armHole: string;               // 10
   // Options
   blouseType: "princess-cut" | "standard";
   hookPosition: "front-hook" | "back-hook";
@@ -105,18 +102,15 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     state: "",
     zip: "",
     country: "USA",
-    // Measurements (1-13)
-    blouseBackLength: "",
-    fullShoulder: "",
-    shoulderStrap: "",
-    backNeckDepth: "",
+    // Measurements (1-10)
+    shoulder: "",
+    shoulderFullLength: "",
     frontNeckDepth: "",
-    shoulderToApex: "",
-    frontLength: "",
     chest: "",
     waist: "",
+    backNeckDepth: "",
+    blouseLength: "",
     sleeveLength: "",
-    armRound: "",
     sleeveRound: "",
     armHole: "",
     // Options
@@ -683,52 +677,32 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                 </p>
               </div>
 
-              {/* All Measurements - matching guide image 1-13 */}
+              {/* All Measurements - matching guide image 1-10 */}
               <div>
-                <h4 className="font-semibold text-foreground mb-4">Enter Your Measurements</h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <h4 className="font-semibold text-foreground mb-2">Front Measurements</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
                   <div>
-                    <Label htmlFor="blouseBackLength">1. Blouse Back Length</Label>
+                    <Label htmlFor="shoulder">1. Shoulder</Label>
                     <Input
-                      id="blouseBackLength"
-                      value={formData.blouseBackLength}
-                      onChange={(e) => handleInputChange("blouseBackLength", e.target.value)}
+                      id="shoulder"
+                      value={formData.shoulder}
+                      onChange={(e) => handleInputChange("shoulder", e.target.value)}
                       placeholder="inches"
                       className="mt-1"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="fullShoulder">2. Full Shoulder</Label>
+                    <Label htmlFor="shoulderFullLength">2. Shoulder Full Length</Label>
                     <Input
-                      id="fullShoulder"
-                      value={formData.fullShoulder}
-                      onChange={(e) => handleInputChange("fullShoulder", e.target.value)}
+                      id="shoulderFullLength"
+                      value={formData.shoulderFullLength}
+                      onChange={(e) => handleInputChange("shoulderFullLength", e.target.value)}
                       placeholder="inches"
                       className="mt-1"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="shoulderStrap">3. Shoulder Strap</Label>
-                    <Input
-                      id="shoulderStrap"
-                      value={formData.shoulderStrap}
-                      onChange={(e) => handleInputChange("shoulderStrap", e.target.value)}
-                      placeholder="inches"
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="backNeckDepth">4. Back Neck Depth</Label>
-                    <Input
-                      id="backNeckDepth"
-                      value={formData.backNeckDepth}
-                      onChange={(e) => handleInputChange("backNeckDepth", e.target.value)}
-                      placeholder="inches"
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="frontNeckDepth">5. Front Neck Depth</Label>
+                    <Label htmlFor="frontNeckDepth">3. Front Neck Depth</Label>
                     <Input
                       id="frontNeckDepth"
                       value={formData.frontNeckDepth}
@@ -738,27 +712,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="shoulderToApex">6. Shoulder to Apex</Label>
-                    <Input
-                      id="shoulderToApex"
-                      value={formData.shoulderToApex}
-                      onChange={(e) => handleInputChange("shoulderToApex", e.target.value)}
-                      placeholder="inches"
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="frontLength">7. Front Length</Label>
-                    <Input
-                      id="frontLength"
-                      value={formData.frontLength}
-                      onChange={(e) => handleInputChange("frontLength", e.target.value)}
-                      placeholder="inches"
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="chest">8. Chest (around)</Label>
+                    <Label htmlFor="chest">4. Chest (around)</Label>
                     <Input
                       id="chest"
                       value={formData.chest}
@@ -768,7 +722,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="waist">9. Waist (around)</Label>
+                    <Label htmlFor="waist">5. Waist (around)</Label>
                     <Input
                       id="waist"
                       value={formData.waist}
@@ -777,8 +731,32 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                       className="mt-1"
                     />
                   </div>
+                </div>
+
+                <h4 className="font-semibold text-foreground mb-2">Back Measurements</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                   <div>
-                    <Label htmlFor="sleeveLength">10. Sleeve Length</Label>
+                    <Label htmlFor="backNeckDepth">6. Back Neck Depth</Label>
+                    <Input
+                      id="backNeckDepth"
+                      value={formData.backNeckDepth}
+                      onChange={(e) => handleInputChange("backNeckDepth", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="blouseLength">7. Blouse Length</Label>
+                    <Input
+                      id="blouseLength"
+                      value={formData.blouseLength}
+                      onChange={(e) => handleInputChange("blouseLength", e.target.value)}
+                      placeholder="inches"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="sleeveLength">8. Sleeve Length</Label>
                     <Input
                       id="sleeveLength"
                       value={formData.sleeveLength}
@@ -788,17 +766,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="armRound">11. Arm Round</Label>
-                    <Input
-                      id="armRound"
-                      value={formData.armRound}
-                      onChange={(e) => handleInputChange("armRound", e.target.value)}
-                      placeholder="inches"
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="sleeveRound">12. Sleeve Round</Label>
+                    <Label htmlFor="sleeveRound">9. Sleeve (around)</Label>
                     <Input
                       id="sleeveRound"
                       value={formData.sleeveRound}
@@ -808,7 +776,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="armHole">13. Arm Hole</Label>
+                    <Label htmlFor="armHole">10. Armhole (around)</Label>
                     <Input
                       id="armHole"
                       value={formData.armHole}
