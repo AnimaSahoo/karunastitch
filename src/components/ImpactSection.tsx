@@ -1,4 +1,5 @@
-import { Heart, Users, MapPin, Award } from "lucide-react";
+import { Users, MapPin, Award, Heart } from "lucide-react";
+import artisanImage from "@/assets/artisan-stitching.jpg";
 
 const stats = [
   { icon: Users, value: "5+", label: "Artisans Employed" },
@@ -45,8 +46,12 @@ export const ImpactSection = () => {
               </div>
               
               <div className="relative">
-                <div className="aspect-square bg-gradient-elegant rounded-2xl flex items-center justify-center">
-                  <Heart className="h-24 w-24 text-primary-foreground opacity-50" />
+                <div className="aspect-[3/4] rounded-2xl overflow-hidden">
+                  <img 
+                    src={artisanImage} 
+                    alt="Woman artisan in Odisha hand-stitching a saree blouse in natural light" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="absolute -bottom-4 -right-4 bg-card rounded-xl p-4 shadow-gold border border-border">
                   <p className="text-sm font-medium text-foreground">
