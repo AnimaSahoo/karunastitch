@@ -160,15 +160,12 @@ const handler = async (req: Request): Promise<Response> => {
     const safeSpecialRequests = escapeHtml(order.special_requests);
     const safeChest = escapeHtml(order.chest);
     const safeWaist = escapeHtml(order.waist);
+    const safeShoulder = escapeHtml(order.shoulder);
     const safeFullShoulder = escapeHtml(order.full_shoulder);
-    const safeShoulderStrap = escapeHtml(order.shoulder_strap);
     const safeBlouseBackLength = escapeHtml(order.blouse_back_length);
-    const safeFrontLength = escapeHtml(order.front_length);
     const safeBackNeckDepth = escapeHtml(order.back_neck_depth);
     const safeFrontNeckDepth = escapeHtml(order.front_neck_depth);
-    const safeShoulderToApex = escapeHtml(order.shoulder_to_apex);
     const safeSleeveLength = escapeHtml(order.sleeve_length);
-    const safeArmRound = escapeHtml(order.arm_round);
     const safeSleeveRound = escapeHtml(order.sleeve_round);
     const safeArmHole = escapeHtml(order.arm_hole);
     const safeStreet = escapeHtml(order.street);
@@ -268,19 +265,16 @@ const handler = async (req: Request): Promise<Response> => {
                 <h3 style="color: #1565c0; font-size: 16px; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 1px;">Measurements</h3>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                  ${safeChest ? `<div style="font-size: 13px;"><span style="color: #666;">Chest:</span> <strong>${safeChest}</strong></div>` : ""}
-                  ${safeWaist ? `<div style="font-size: 13px;"><span style="color: #666;">Waist:</span> <strong>${safeWaist}</strong></div>` : ""}
-                  ${safeFullShoulder ? `<div style="font-size: 13px;"><span style="color: #666;">Full Shoulder:</span> <strong>${safeFullShoulder}</strong></div>` : ""}
-                  ${safeShoulderStrap ? `<div style="font-size: 13px;"><span style="color: #666;">Shoulder Strap:</span> <strong>${safeShoulderStrap}</strong></div>` : ""}
-                  ${safeBlouseBackLength ? `<div style="font-size: 13px;"><span style="color: #666;">Back Length:</span> <strong>${safeBlouseBackLength}</strong></div>` : ""}
-                  ${safeFrontLength ? `<div style="font-size: 13px;"><span style="color: #666;">Front Length:</span> <strong>${safeFrontLength}</strong></div>` : ""}
-                  ${safeBackNeckDepth ? `<div style="font-size: 13px;"><span style="color: #666;">Back Neck Depth:</span> <strong>${safeBackNeckDepth}</strong></div>` : ""}
-                  ${safeFrontNeckDepth ? `<div style="font-size: 13px;"><span style="color: #666;">Front Neck Depth:</span> <strong>${safeFrontNeckDepth}</strong></div>` : ""}
-                  ${safeShoulderToApex ? `<div style="font-size: 13px;"><span style="color: #666;">Shoulder to Apex:</span> <strong>${safeShoulderToApex}</strong></div>` : ""}
-                  ${safeSleeveLength ? `<div style="font-size: 13px;"><span style="color: #666;">Sleeve Length:</span> <strong>${safeSleeveLength}</strong></div>` : ""}
-                  ${safeArmRound ? `<div style="font-size: 13px;"><span style="color: #666;">Arm Round:</span> <strong>${safeArmRound}</strong></div>` : ""}
-                  ${safeSleeveRound ? `<div style="font-size: 13px;"><span style="color: #666;">Sleeve Round:</span> <strong>${safeSleeveRound}</strong></div>` : ""}
-                  ${safeArmHole ? `<div style="font-size: 13px;"><span style="color: #666;">Arm Hole:</span> <strong>${safeArmHole}</strong></div>` : ""}
+                  ${safeShoulder ? `<div style="font-size: 13px;"><span style="color: #666;">1. Shoulder:</span> <strong>${safeShoulder}</strong></div>` : ""}
+                  ${safeFullShoulder ? `<div style="font-size: 13px;"><span style="color: #666;">2. Shoulder Full Length:</span> <strong>${safeFullShoulder}</strong></div>` : ""}
+                  ${safeFrontNeckDepth ? `<div style="font-size: 13px;"><span style="color: #666;">3. Front Neck Depth:</span> <strong>${safeFrontNeckDepth}</strong></div>` : ""}
+                  ${safeChest ? `<div style="font-size: 13px;"><span style="color: #666;">4. Chest (around):</span> <strong>${safeChest}</strong></div>` : ""}
+                  ${safeWaist ? `<div style="font-size: 13px;"><span style="color: #666;">5. Waist (around):</span> <strong>${safeWaist}</strong></div>` : ""}
+                  ${safeBackNeckDepth ? `<div style="font-size: 13px;"><span style="color: #666;">6. Back Neck Depth:</span> <strong>${safeBackNeckDepth}</strong></div>` : ""}
+                  ${safeBlouseBackLength ? `<div style="font-size: 13px;"><span style="color: #666;">7. Blouse Length:</span> <strong>${safeBlouseBackLength}</strong></div>` : ""}
+                  ${safeSleeveLength ? `<div style="font-size: 13px;"><span style="color: #666;">8. Sleeve Length:</span> <strong>${safeSleeveLength}</strong></div>` : ""}
+                  ${safeSleeveRound ? `<div style="font-size: 13px;"><span style="color: #666;">9. Sleeve (around):</span> <strong>${safeSleeveRound}</strong></div>` : ""}
+                  ${safeArmHole ? `<div style="font-size: 13px;"><span style="color: #666;">10. Armhole (around):</span> <strong>${safeArmHole}</strong></div>` : ""}
                 </div>
                 
                 ${order.want_measurement_help ? `

@@ -111,6 +111,7 @@ export type Database = {
           order_date: string
           phone: string
           selected_design: string | null
+          shoulder: string | null
           shoulder_strap: string | null
           shoulder_to_apex: string | null
           sleeve_length: string | null
@@ -147,6 +148,7 @@ export type Database = {
           order_date?: string
           phone: string
           selected_design?: string | null
+          shoulder?: string | null
           shoulder_strap?: string | null
           shoulder_to_apex?: string | null
           sleeve_length?: string | null
@@ -183,6 +185,7 @@ export type Database = {
           order_date?: string
           phone?: string
           selected_design?: string | null
+          shoulder?: string | null
           shoulder_strap?: string | null
           shoulder_to_apex?: string | null
           sleeve_length?: string | null
