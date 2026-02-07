@@ -156,7 +156,7 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           </h1>
           
           {/* Tagline */}
-          <p className="text-lg md:text-xl font-light text-muted-foreground mb-3">
+          <p className="text-base md:text-lg font-light text-muted-foreground mb-3">
             Custom Saree Blouses Designed to Fit You Perfectly
           </p>
           
