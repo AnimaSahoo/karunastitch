@@ -588,55 +588,43 @@ const Admin = () => {
                   <h3 className="font-semibold text-lg mb-3">Measurements</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
                     <div>
-                      <p className="text-muted-foreground">Blouse Back Length</p>
-                      <p className="font-medium">{selectedOrder.blouseBackLength || "N/A"}</p>
+                      <p className="text-muted-foreground">1. Shoulder</p>
+                      <p className="font-medium">{selectedOrder.shoulder || "N/A"}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Full Shoulder</p>
-                      <p className="font-medium">{selectedOrder.fullShoulder || "N/A"}</p>
+                      <p className="text-muted-foreground">2. Shoulder Full Length</p>
+                      <p className="font-medium">{selectedOrder.shoulderFullLength || "N/A"}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Shoulder Strap</p>
-                      <p className="font-medium">{selectedOrder.shoulderStrap || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Back Neck Depth</p>
-                      <p className="font-medium">{selectedOrder.backNeckDepth || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Front Neck Depth</p>
+                      <p className="text-muted-foreground">3. Front Neck Depth</p>
                       <p className="font-medium">{selectedOrder.frontNeckDepth || "N/A"}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Shoulder to Apex</p>
-                      <p className="font-medium">{selectedOrder.shoulderToApex || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Front Length</p>
-                      <p className="font-medium">{selectedOrder.frontLength || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Chest</p>
+                      <p className="text-muted-foreground">4. Chest (around)</p>
                       <p className="font-medium">{selectedOrder.chest || "N/A"}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Waist</p>
+                      <p className="text-muted-foreground">5. Waist (around)</p>
                       <p className="font-medium">{selectedOrder.waist || "N/A"}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Sleeve Length</p>
+                      <p className="text-muted-foreground">6. Back Neck Depth</p>
+                      <p className="font-medium">{selectedOrder.backNeckDepth || "N/A"}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">7. Blouse Length</p>
+                      <p className="font-medium">{selectedOrder.blouseLength || "N/A"}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">8. Sleeve Length</p>
                       <p className="font-medium">{selectedOrder.sleeveLength || "N/A"}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Arm Round</p>
-                      <p className="font-medium">{selectedOrder.armRound || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Sleeve Round</p>
+                      <p className="text-muted-foreground">9. Sleeve (around)</p>
                       <p className="font-medium">{selectedOrder.sleeveRound || "N/A"}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Arm Hole</p>
+                      <p className="text-muted-foreground">10. Armhole (around)</p>
                       <p className="font-medium">{selectedOrder.armHole || "N/A"}</p>
                     </div>
                   </div>

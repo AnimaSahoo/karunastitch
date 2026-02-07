@@ -14,17 +14,14 @@ export interface OrderData {
   state: string;
   zip: string;
   country: string;
-  blouseBackLength: string;
-  fullShoulder: string;
-  shoulderStrap: string;
-  backNeckDepth: string;
+  shoulder: string;
+  shoulderFullLength: string;
   frontNeckDepth: string;
-  shoulderToApex: string;
-  frontLength: string;
   chest: string;
   waist: string;
+  backNeckDepth: string;
+  blouseLength: string;
   sleeveLength: string;
-  armRound: string;
   sleeveRound: string;
   armHole: string;
   blouseType: string;
@@ -49,17 +46,14 @@ interface DbOrder {
   state: string | null;
   zip: string | null;
   country: string | null;
-  blouse_back_length: string | null;
+  shoulder: string | null;
   full_shoulder: string | null;
-  shoulder_strap: string | null;
-  back_neck_depth: string | null;
   front_neck_depth: string | null;
-  shoulder_to_apex: string | null;
-  front_length: string | null;
   chest: string | null;
   waist: string | null;
+  back_neck_depth: string | null;
+  blouse_back_length: string | null;
   sleeve_length: string | null;
-  arm_round: string | null;
   sleeve_round: string | null;
   arm_hole: string | null;
   blouse_type: string | null;
@@ -89,17 +83,14 @@ const dbToAppOrder = (dbOrder: DbOrder): OrderData => ({
   state: dbOrder.state || "",
   zip: dbOrder.zip || "",
   country: dbOrder.country || "",
-  blouseBackLength: dbOrder.blouse_back_length || "",
-  fullShoulder: dbOrder.full_shoulder || "",
-  shoulderStrap: dbOrder.shoulder_strap || "",
-  backNeckDepth: dbOrder.back_neck_depth || "",
+  shoulder: dbOrder.shoulder || "",
+  shoulderFullLength: dbOrder.full_shoulder || "",
   frontNeckDepth: dbOrder.front_neck_depth || "",
-  shoulderToApex: dbOrder.shoulder_to_apex || "",
-  frontLength: dbOrder.front_length || "",
   chest: dbOrder.chest || "",
   waist: dbOrder.waist || "",
+  backNeckDepth: dbOrder.back_neck_depth || "",
+  blouseLength: dbOrder.blouse_back_length || "",
   sleeveLength: dbOrder.sleeve_length || "",
-  armRound: dbOrder.arm_round || "",
   sleeveRound: dbOrder.sleeve_round || "",
   armHole: dbOrder.arm_hole || "",
   blouseType: dbOrder.blouse_type || "",
@@ -124,17 +115,14 @@ const appToDbOrder = (order: Omit<OrderData, "id" | "status">) => ({
   state: order.state,
   zip: order.zip,
   country: order.country,
-  blouse_back_length: order.blouseBackLength,
-  full_shoulder: order.fullShoulder,
-  shoulder_strap: order.shoulderStrap,
-  back_neck_depth: order.backNeckDepth,
+  shoulder: order.shoulder,
+  full_shoulder: order.shoulderFullLength,
   front_neck_depth: order.frontNeckDepth,
-  shoulder_to_apex: order.shoulderToApex,
-  front_length: order.frontLength,
   chest: order.chest,
   waist: order.waist,
+  back_neck_depth: order.backNeckDepth,
+  blouse_back_length: order.blouseLength,
   sleeve_length: order.sleeveLength,
-  arm_round: order.armRound,
   sleeve_round: order.sleeveRound,
   arm_hole: order.armHole,
   blouse_type: order.blouseType,

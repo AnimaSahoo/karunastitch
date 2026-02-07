@@ -61,17 +61,14 @@ export const orderFormSchema = z.object({
     .max(100, "Country must be less than 100 characters"),
   
   // Measurements (all optional, but validated when provided)
-  blouseBackLength: z.string().max(10).optional(),
-  fullShoulder: z.string().max(10).optional(),
-  shoulderStrap: z.string().max(10).optional(),
-  backNeckDepth: z.string().max(10).optional(),
+  shoulder: z.string().max(10).optional(),
+  shoulderFullLength: z.string().max(10).optional(),
   frontNeckDepth: z.string().max(10).optional(),
-  shoulderToApex: z.string().max(10).optional(),
-  frontLength: z.string().max(10).optional(),
   chest: z.string().max(10).optional(),
   waist: z.string().max(10).optional(),
+  backNeckDepth: z.string().max(10).optional(),
+  blouseLength: z.string().max(10).optional(),
   sleeveLength: z.string().max(10).optional(),
-  armRound: z.string().max(10).optional(),
   sleeveRound: z.string().max(10).optional(),
   armHole: z.string().max(10).optional(),
   
