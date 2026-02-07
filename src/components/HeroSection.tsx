@@ -161,8 +161,8 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           
           
           {/* Intro Text */}
-          <div className="max-w-xl space-y-4 mb-10">
-            <p className="text-lg text-muted-foreground leading-relaxed">
+          <div className="space-y-4 mb-10 mt-5" style={{ maxWidth: '590px' }}>
+            <p className="font-body text-muted-foreground" style={{ fontSize: '16.5px', lineHeight: 1.65 }}>
               Beautiful custom blouses handcrafted by skilled artisans in Odisha, India. 
               Every stitch supports differently-abled women in building sustainable livelihoods.
             </p>
