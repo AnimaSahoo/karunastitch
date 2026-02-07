@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, User, MapPin, Ruler, Shirt, Calendar, Download } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
-import * as XLSX from "xlsx";
+import { downloadCSV } from "@/lib/csvExport";
 interface OrderFormData {
   customerName: string;
   email: string;
@@ -117,11 +117,8 @@ export const OrderForm = ({ onSubmit }: OrderFormProps) => {
       "Special Requests": formData.specialRequests,
     };
 
-    const worksheet = XLSX.utils.json_to_sheet([exportData]);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Order Details");
-    XLSX.writeFile(workbook, `order_${formData.customerName || "customer"}_${new Date().toISOString().split('T')[0]}.xlsx`);
-    toast.success("Order exported to Excel successfully!");
+    downloadCSV([exportData], `order_${formData.customerName || "customer"}_${new Date().toISOString().split('T')[0]}.csv`);
+    toast.success("Order exported to CSV successfully!");
   };
 
   const handleSubmit = (e: React.FormEvent) => {

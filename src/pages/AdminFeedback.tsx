@@ -20,7 +20,7 @@ import { ArrowLeft, Download, Loader2, Star, MessageSquare } from "lucide-react"
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import * as XLSX from "xlsx";
+import { downloadCSV } from "@/lib/csvExport";
 import { logger } from "@/lib/logger";
 
 interface FeedbackData {
@@ -89,16 +89,12 @@ const AdminFeedback = () => {
       "Submitted On": new Date(item.created_at).toLocaleDateString("en-IN"),
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Feedback");
-
     const date = new Date().toISOString().split("T")[0];
-    XLSX.writeFile(workbook, `KarunaStitch_Feedback_${date}.xlsx`);
+    downloadCSV(exportData, `KarunaStitch_Feedback_${date}.csv`);
 
     toast({
       title: "Export successful",
-      description: "Feedback has been exported to Excel.",
+      description: "Feedback has been exported to CSV.",
     });
   };
 
