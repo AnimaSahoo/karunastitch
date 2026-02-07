@@ -121,11 +121,35 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body text-base;
   }
 
   html {
     scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+
+  h1 {
+    @apply text-[44px] md:text-[52px] leading-tight;
+  }
+
+  h2 {
+    @apply text-[28px] md:text-[32px] leading-snug;
+  }
+
+  h3 {
+    @apply text-[20px] md:text-[22px] leading-snug;
+  }
+
+  body {
+    @apply text-[16px] md:text-[18px];
+  }
+
+  button, label, .text-label {
+    @apply text-[14px] md:text-[16px];
   }
 }
 
