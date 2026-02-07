@@ -669,7 +669,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                   <img 
                     src={measurementGuide} 
                     alt="How to take blouse measurements" 
-                    className="max-w-2xl w-full rounded-lg border border-border shadow-sm"
+                    className="max-w-[80%] md:max-w-lg w-full rounded-lg border border-border shadow-sm"
                   />
                 </div>
                 <p className="text-sm text-muted-foreground text-center mt-3">
