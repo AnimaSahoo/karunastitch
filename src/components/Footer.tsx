@@ -26,7 +26,7 @@ export const Footer = () => {
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           {/* Brand */}
           <div>
-            <h3 className="text-2xl mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h3 className="text-2xl mb-4 font-heading">
               <span className="text-primary-foreground font-bold">Karuna</span>
               <span className="text-accent"> </span>
               <span className="font-semibold">Stitch</span>
