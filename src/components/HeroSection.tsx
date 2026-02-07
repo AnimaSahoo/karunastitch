@@ -149,19 +149,18 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
         <div className="max-w-2xl">
 
           {/* Brand Name */}
-          <h1 className="mb-4" style={{ fontSize: '54px', letterSpacing: '0.5px', lineHeight: 1.1 }}>
+          <h1 className="mb-0" style={{ fontSize: '54px', letterSpacing: '0.5px', lineHeight: 1.1 }}>
             <span className="text-primary font-semibold">Karuna</span>
             <span className="text-foreground font-normal"> Stitch</span>
           </h1>
           
           {/* Tagline */}
-          <p className="font-body text-muted-foreground mb-3 mt-5" style={{ fontSize: '21px', lineHeight: 1.4 }}>
+          <p className="font-body text-muted-foreground" style={{ fontSize: '21px', lineHeight: 1.4, marginTop: '18px' }}>
             Custom Saree Blouses Designed to Fit You Perfectly
           </p>
           
-          
           {/* Intro Text */}
-          <div className="space-y-4 mb-10 mt-5" style={{ maxWidth: '590px' }}>
+          <div className="space-y-4 mb-10" style={{ maxWidth: '590px', marginTop: '22px' }}>
             <p className="font-body text-muted-foreground" style={{ fontSize: '16.5px', lineHeight: 1.65 }}>
               Beautiful custom blouses handcrafted by skilled artisans in Odisha, India. 
               Every stitch supports differently-abled women in building sustainable livelihoods.
