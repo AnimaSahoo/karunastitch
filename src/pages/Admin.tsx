@@ -48,7 +48,7 @@ import {
 } from "@/lib/orderUtils";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import * as XLSX from "xlsx";
+import { downloadCSV } from "@/lib/csvExport";
 import { logger } from "@/lib/logger";
 
 type SearchType = "all" | "name" | "email" | "phone" | "orderId" | "blouseType";
@@ -247,16 +247,12 @@ const Admin = () => {
       return;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(allOrders);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-
     const date = new Date().toISOString().split("T")[0];
-    XLSX.writeFile(workbook, `KarunaStitch_AllOrders_${date}.xlsx`);
+    downloadCSV(allOrders as unknown as Record<string, unknown>[], `KarunaStitch_AllOrders_${date}.csv`);
 
     toast({
       title: "Export successful",
-      description: "Orders have been exported to Excel.",
+      description: "Orders have been exported to CSV.",
     });
   };
 

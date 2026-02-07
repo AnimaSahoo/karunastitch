@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Download, ArrowLeft, ShoppingBag, Loader2, MessageSquare } from "lucide-react";
-import * as XLSX from "xlsx";
+import { downloadCSV } from "@/lib/csvExport";
 import { toast } from "sonner";
 import { getCurrentOrder, getAllOrders, type OrderData } from "@/lib/orderUtils";
 import { logger } from "@/lib/logger";
@@ -74,21 +74,9 @@ const Checkout = () => {
         "Status": order.status,
       }));
 
-      const worksheet = XLSX.utils.json_to_sheet(excelData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "All Orders");
-
-      // Auto-size columns
-      const maxWidth = 30;
-      const colWidths = Object.keys(excelData[0] || {}).map((key) => ({
-        wch: Math.min(key.length + 5, maxWidth),
-      }));
-      worksheet["!cols"] = colWidths;
-
-      // Generate and download file
-      const fileName = `KarunaStitch_AllOrders_${new Date().toISOString().split("T")[0]}.xlsx`;
-      XLSX.writeFile(workbook, fileName);
-      toast.success("Excel file downloaded successfully!");
+      const fileName = `KarunaStitch_AllOrders_${new Date().toISOString().split("T")[0]}.csv`;
+      downloadCSV(excelData, fileName);
+      toast.success("CSV file downloaded successfully!");
     } catch (error) {
       logger.error("Checkout.exportToExcel", error);
       toast.error("Failed to export orders");
@@ -222,7 +210,7 @@ const Checkout = () => {
             ) : (
               <Download className="h-4 w-4 mr-2" />
             )}
-            Download All Orders as Excel ({allOrders.length} orders)
+            Download All Orders as CSV ({allOrders.length} orders)
           </Button>
 
           <Button
