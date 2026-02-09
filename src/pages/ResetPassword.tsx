@@ -84,7 +84,7 @@ const ResetPassword = () => {
         
         // Sign out and redirect to login
         await supabase.auth.signOut();
-        setTimeout(() => navigate('/admin-login'), 2000);
+        setTimeout(() => navigate('/login'), 2000);
       }
     } catch (error) {
       toast({
@@ -116,7 +116,7 @@ const ResetPassword = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Link to="/admin-login">
+            <Link to="/login">
               <Button className="w-full">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Login
@@ -133,7 +133,7 @@ const ResetPassword = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <div className="flex items-center gap-2 mb-4">
-            <Link to="/admin-login">
+            <Link to="/login">
               <Button variant="ghost" size="icon">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
