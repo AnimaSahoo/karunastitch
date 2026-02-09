@@ -13,6 +13,10 @@ import ResetPassword from "./pages/ResetPassword";
 import Feedback from "./pages/Feedback";
 import NotFound from "./pages/NotFound";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
+import ProtectedCustomerRoute from "@/components/ProtectedCustomerRoute";
+import CustomerLogin from "./pages/CustomerLogin";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import AccountSettings from "./pages/AccountSettings";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +49,16 @@ const App = () => (
               }
             />
             <Route path="/feedback" element={<Feedback />} />
+            <Route path="/login" element={<CustomerLogin />} />
+            <Route path="/terms" element={<TermsAndConditions />} />
+            <Route
+              path="/account"
+              element={
+                <ProtectedCustomerRoute>
+                  <AccountSettings />
+                </ProtectedCustomerRoute>
+              }
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

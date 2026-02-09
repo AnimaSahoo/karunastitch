@@ -8,9 +8,14 @@ interface AuthContextType {
   session: Session | null;
   isAdmin: boolean;
   isLoading: boolean;
+  requires2FA: boolean;
+  otpVerified: boolean;
+  isFullyAuthenticated: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, fullName?: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  sendOTP: () => Promise<{ error: Error | null }>;
+  verifyOTP: (code: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,6 +25,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [requires2FA, setRequires2FA] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+
+  const isFullyAuthenticated = !!user && (!requires2FA || otpVerified);
 
   const checkAdminRole = async (userId: string) => {
     try {
@@ -42,37 +51,76 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const checkAndCreateProfile = async (userId: string, userMetadata?: Record<string, unknown>) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('two_fa_enabled')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (error) {
+        logger.error('checkProfile', error);
+        return false;
+      }
+
+      if (!profile) {
+        // Create profile for first-time login
+        await supabase.from('profiles').insert({
+          user_id: userId,
+          full_name: (userMetadata?.full_name as string) || null,
+          terms_accepted_at: (userMetadata?.terms_accepted_at as string) || null,
+        });
+        return false; // New profile, 2FA not enabled
+      }
+
+      return profile.two_fa_enabled || false;
+    } catch (error) {
+      logger.error('checkAndCreateProfile', error);
+      return false;
+    }
+  };
+
+  const initializeUser = async (currentSession: Session | null) => {
+    setSession(currentSession);
+    setUser(currentSession?.user ?? null);
+
+    if (currentSession?.user) {
+      const [adminStatus, has2FA] = await Promise.all([
+        checkAdminRole(currentSession.user.id),
+        checkAndCreateProfile(currentSession.user.id, currentSession.user.user_metadata),
+      ]);
+
+      setIsAdmin(adminStatus);
+      setRequires2FA(has2FA);
+
+      if (has2FA) {
+        const verified = sessionStorage.getItem(`otp_verified_${currentSession.user.id}`);
+        setOtpVerified(verified === 'true');
+      } else {
+        setOtpVerified(true);
+      }
+    } else {
+      setIsAdmin(false);
+      setRequires2FA(false);
+      setOtpVerified(false);
+    }
+
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-
-        if (session?.user) {
-          // Check admin role with a slight delay to avoid race conditions
-          setTimeout(async () => {
-            const adminStatus = await checkAdminRole(session.user.id);
-            setIsAdmin(adminStatus);
-            setIsLoading(false);
-          }, 0);
-        } else {
-          setIsAdmin(false);
-          setIsLoading(false);
-        }
+      async (_event, currentSession) => {
+        // Use setTimeout to avoid race conditions with Supabase internals
+        setTimeout(() => initializeUser(currentSession), 0);
       }
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        const adminStatus = await checkAdminRole(session.user.id);
-        setIsAdmin(adminStatus);
-      }
-      setIsLoading(false);
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      initializeUser(currentSession);
     });
 
     return () => subscription.unsubscribe();
@@ -86,11 +134,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { error: error as Error | null };
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, fullName?: string) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
+        data: {
+          full_name: fullName || '',
+          terms_accepted_at: new Date().toISOString(),
+        },
         emailRedirectTo: window.location.origin,
       },
     });
@@ -98,8 +150,55 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
+    if (user) {
+      sessionStorage.removeItem(`otp_verified_${user.id}`);
+    }
     await supabase.auth.signOut();
     setIsAdmin(false);
+    setRequires2FA(false);
+    setOtpVerified(false);
+  };
+
+  const sendOTP = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-otp');
+
+      if (error) {
+        return { error: new Error('Failed to send verification code. Please try again.') };
+      }
+
+      if (data?.error) {
+        return { error: new Error(data.error) };
+      }
+
+      return { error: null };
+    } catch (error) {
+      return { error: error as Error };
+    }
+  };
+
+  const verifyOTP = async (code: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-otp', {
+        body: { code },
+      });
+
+      if (error) {
+        return { error: new Error('Verification failed. Please try again.') };
+      }
+
+      if (data?.verified) {
+        setOtpVerified(true);
+        if (user) {
+          sessionStorage.setItem(`otp_verified_${user.id}`, 'true');
+        }
+        return { error: null };
+      }
+
+      return { error: new Error(data?.error || 'Invalid verification code') };
+    } catch (error) {
+      return { error: error as Error };
+    }
   };
 
   return (
@@ -109,9 +208,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         session,
         isAdmin,
         isLoading,
+        requires2FA,
+        otpVerified,
+        isFullyAuthenticated,
         signIn,
         signUp,
         signOut,
+        sendOTP,
+        verifyOTP,
       }}
     >
       {children}

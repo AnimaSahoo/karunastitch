@@ -1,4 +1,4 @@
-import { Mail, Phone, Instagram, Heart, ClipboardList, MessageSquare } from "lucide-react";
+import { Mail, Phone, Instagram, Heart, ClipboardList, MessageSquare, Lock, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const Footer = () => {
@@ -84,8 +84,22 @@ export const Footer = () => {
                 Privacy Policy
               </a>
               <Link 
-                to="/admin" 
+                to="/terms"
+                className="flex items-center gap-2 hover:text-accent transition-colors"
+              >
+                <FileText className="h-4 w-4" />
+                Terms & Conditions
+              </Link>
+              <Link 
+                to="/login"
                 className="flex items-center gap-2 hover:text-accent transition-colors mt-4 pt-2 border-t border-muted/20"
+              >
+                <Lock className="h-4 w-4" />
+                My Account
+              </Link>
+              <Link 
+                to="/admin" 
+                className="flex items-center gap-2 hover:text-accent transition-colors"
               >
                 <ClipboardList className="h-4 w-4" />
                 Order Management
