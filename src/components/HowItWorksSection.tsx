@@ -1,10 +1,10 @@
-import { Upload, Palette, Ruler, Package } from "lucide-react";
+import { Ruler, Palette, Shirt, Package } from "lucide-react";
 
 const steps = [
   {
-    icon: Upload,
-    title: "Upload Fabric Photos",
-    description: "Share clear photos of your blouse fabric material",
+    icon: Ruler,
+    title: "Submit Measurements",
+    description: "Provide your measurements and shipping address",
     step: 1,
   },
   {
@@ -14,9 +14,9 @@ const steps = [
     step: 2,
   },
   {
-    icon: Ruler,
-    title: "Submit Measurements",
-    description: "Provide your measurements and shipping address",
+    icon: Shirt,
+    title: "Drop your Fabric",
+    description: "Send us your blouse fabric material",
     step: 3,
   },
   {
