@@ -40,11 +40,12 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
         <img 
           src={heroImage} 
           alt="Beautifully crafted saree blouses with traditional Indian embroidery" 
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover saturate-[0.75] contrast-[1.08] brightness-[1.03]"
+          style={{ filter: 'saturate(0.75) contrast(1.08) brightness(1.03) sepia(0.08)' }}
         />
         {/* Warm dark overlay for premium boutique feel */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(30_20%_10%/0.85)] via-[hsl(30_15%_15%/0.55)] to-[hsl(30_10%_20%/0.25)]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[hsl(30_20%_10%/0.30)] via-transparent to-[hsl(30_15%_15%/0.15)]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(25_25%_8%/0.82)] via-[hsl(28_18%_12%/0.50)] to-[hsl(30_15%_18%/0.22)]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[hsl(25_22%_8%/0.28)] via-transparent to-[hsl(28_18%_12%/0.12)]" />
       </div>
 
       {/* Header/Navigation */}
