@@ -51,21 +51,21 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
       <header 
         className={`fixed top-0 left-0 right-0 w-full py-4 px-6 flex items-center justify-between z-50 transition-all duration-300 ${
           isScrolled 
-            ? "bg-background/95 backdrop-blur-md shadow-md py-3" 
+            ? "bg-background/95 backdrop-blur-md shadow-md py-3 [&_nav]:text-muted-foreground [&_.brand-name]:text-foreground [&_.brand-primary]:text-primary [&_.mobile-menu-btn]:text-foreground" 
             : "bg-transparent"
         }`}
       >
         <div className="flex items-center gap-3">
           <img src={logo} alt="Karuna Stitch" className="h-12 w-auto" />
-          <span className="text-xl text-foreground hidden sm:inline font-heading">
-            <span className="text-primary font-semibold">Karuna</span>
-            <span className="text-accent"> </span>
+          <span className="text-xl hidden sm:inline font-heading brand-name text-white/90">
+            <span className="brand-primary text-[hsl(340_55%_65%)] font-semibold">Karuna</span>
+            <span> </span>
             <span className="font-medium">Stitch</span>
           </span>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-4 md:gap-6 text-sm font-medium text-muted-foreground">
+        <nav className="hidden md:flex items-center gap-4 md:gap-6 text-sm font-medium text-white/80">
           {navLinks.map((link) => (
             <a 
               key={link.href} 
@@ -103,8 +103,8 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           </Link>
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-foreground">
-                <Menu className="h-6 w-6" />
+          <Button variant="ghost" size="icon" className="mobile-menu-btn text-white/90">
+            <Menu className="h-6 w-6" />
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
