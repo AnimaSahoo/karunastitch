@@ -640,47 +640,44 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                   </div>
 
                   {/* Delivery Date */}
-                  <div>
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <Label>Delivery Date</Label>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-muted text-muted-foreground text-[10px] font-bold cursor-help">?</span>
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="max-w-[220px] text-center">
-                          Select a date if you have a hard deadline for delivery (e.g. wedding, event).
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !formData.deliveryDate && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {formData.deliveryDate ? (
-                            format(formData.deliveryDate, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 bg-background" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={formData.deliveryDate || undefined}
-                          onSelect={(date) => handleInputChange("deliveryDate", date as any)}
-                          disabled={(date) => date < new Date()}
-                          initialFocus
-                          className="pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="cursor-help">
+                        <Label className="mb-3 block">Delivery Date</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !formData.deliveryDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {formData.deliveryDate ? (
+                                format(formData.deliveryDate, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0 bg-background" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={formData.deliveryDate || undefined}
+                              onSelect={(date) => handleInputChange("deliveryDate", date as any)}
+                              disabled={(date) => date < new Date()}
+                              initialFocus
+                              className="pointer-events-auto"
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[220px] text-center">
+                      Select a date if you have a hard deadline for delivery (e.g. wedding, event).
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
 
