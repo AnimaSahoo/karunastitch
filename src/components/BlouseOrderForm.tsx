@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
@@ -640,7 +641,17 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
 
                   {/* Delivery Date */}
                   <div>
-                    <Label className="mb-3 block">Delivery Date</Label>
+                    <div className="flex items-center gap-1.5 mb-3">
+                      <Label>Delivery Date</Label>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-muted text-muted-foreground text-[10px] font-bold cursor-help">?</span>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="max-w-[220px] text-center">
+                          Select a date if you have a hard deadline for delivery (e.g. wedding, event).
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
