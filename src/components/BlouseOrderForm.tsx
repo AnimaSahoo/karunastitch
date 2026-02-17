@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -88,8 +89,9 @@ const sampleDesigns = [
 
 export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
   const navigate = useNavigate();
+  const { user, isFullyAuthenticated } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [honeypot, setHoneypot] = useState(""); // Bot trap field
+  const [honeypot, setHoneypot] = useState("");
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const formStartTime = useRef(Date.now());
   
@@ -102,7 +104,6 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     state: "",
     zip: "",
     country: "USA",
-    // Measurements (1-10)
     shoulder: "",
     shoulderFullLength: "",
     frontNeckDepth: "",
@@ -113,7 +114,6 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
     sleeveLength: "",
     sleeveRound: "",
     armHole: "",
-    // Options
     blouseType: "standard",
     hookPosition: "back-hook",
     deliveryDate: null,
@@ -128,6 +128,43 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
   const [sketchData, setSketchData] = useState<string>("");
   const [designDescription, setDesignDescription] = useState("");
   const [activeDesignTab, setActiveDesignTab] = useState("sample");
+
+  // Auth gate: show login prompt if not authenticated
+  if (!user || !isFullyAuthenticated) {
+    return (
+      <section className="py-16 bg-background" id="order-form">
+        <div className="container mx-auto px-4">
+          <div className="max-w-lg mx-auto text-center">
+            <Card className="shadow-gold border-border">
+              <CardContent className="p-10 space-y-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-2">
+                  <User className="h-8 w-8 text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground">
+                  Sign In to Place Your Order
+                </h2>
+                <p className="text-muted-foreground">
+                  Create an account or sign in to enter your measurements and design your custom blouse.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Link to="/login?redirect=/#order-form">
+                    <Button size="lg" className="w-full sm:w-auto px-8">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to="/login?redirect=/#order-form&mode=signup">
+                    <Button size="lg" variant="outline" className="w-full sm:w-auto px-8">
+                      Create Account
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

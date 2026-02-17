@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -32,11 +32,19 @@ const CustomerLogin = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const { signIn, signUp, sendOTP, user, isFullyAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/account";
+
+  // Set initial mode from query param
+  useEffect(() => {
+    const mode = searchParams.get("mode");
+    if (mode === "signup") setFormMode("signup");
+  }, [searchParams]);
 
   // Redirect if already fully authenticated
   useEffect(() => {
     if (user && isFullyAuthenticated) {
-      navigate("/account");
+      navigate(redirectTo);
     }
   }, [user, isFullyAuthenticated, navigate]);
 
@@ -142,7 +150,7 @@ const CustomerLogin = () => {
             }
           } else {
             toast({ title: "Welcome back!", description: "You've been signed in successfully." });
-            navigate("/account");
+            navigate(redirectTo);
           }
         }
       }
@@ -160,7 +168,7 @@ const CustomerLogin = () => {
   const handleOTPVerified = () => {
     setShowOTP(false);
     toast({ title: "Welcome back!", description: "Your identity has been verified." });
-    navigate("/account");
+    navigate(redirectTo);
   };
 
   const handleOTPClose = async () => {
