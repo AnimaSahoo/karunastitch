@@ -1,29 +1,23 @@
-import { Ruler, Palette, Shirt, Package } from "lucide-react";
+import { Palette, Ruler, Package } from "lucide-react";
 
 const steps = [
   {
-    icon: Ruler,
-    title: "Submit Measurements",
-    description: "Provide your measurements and shipping address",
+    icon: Palette,
+    title: "Choose Your Style",
+    description: "Pick from our curated designs or create your own unique style",
     step: 1,
   },
   {
-    icon: Palette,
-    title: "Choose or Design",
-    description: "Pick from sample designs or create your own style",
+    icon: Ruler,
+    title: "Share Your Measurements",
+    description: "Provide your measurements so we can craft the perfect fit",
     step: 2,
   },
   {
-    icon: Shirt,
-    title: "Drop your Fabric",
-    description: "Send us your blouse fabric material",
-    step: 3,
-  },
-  {
     icon: Package,
-    title: "Receive at Home",
-    description: "Your custom blouse delivered to your doorstep",
-    step: 4,
+    title: "We Stitch & Deliver",
+    description: "We handcraft your blouse and deliver it to your doorstep",
+    step: 3,
   },
 ];
 
