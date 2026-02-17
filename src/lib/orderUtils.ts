@@ -166,9 +166,12 @@ export const getOrderById = async (orderId: string): Promise<OrderData | null> =
   return dbToAppOrder(data as DbOrder);
 };
 
+// Escape special ILIKE pattern characters
+const escapePattern = (str: string) => str.replace(/[%_\\]/g, '\\$&');
+
 // Search orders by query across multiple fields
 export const searchOrders = async (query: string): Promise<OrderData[]> => {
-  const searchTerm = `%${query}%`;
+  const searchTerm = `%${escapePattern(query)}%`;
   
   const { data, error } = await supabase
     .from("orders")
@@ -189,7 +192,7 @@ export const getOrdersByPhone = async (phone: string): Promise<OrderData[]> => {
   const { data, error } = await supabase
     .from("orders")
     .select("*")
-    .ilike("phone", `%${phone}%`)
+    .ilike("phone", `%${escapePattern(phone)}%`)
     .order("order_date", { ascending: false });
 
   if (error) {
@@ -205,7 +208,7 @@ export const getOrdersByEmail = async (email: string): Promise<OrderData[]> => {
   const { data, error } = await supabase
     .from("orders")
     .select("*")
-    .ilike("email", `%${email}%`)
+    .ilike("email", `%${escapePattern(email)}%`)
     .order("order_date", { ascending: false });
 
   if (error) {
@@ -221,7 +224,7 @@ export const getOrdersByName = async (name: string): Promise<OrderData[]> => {
   const { data, error } = await supabase
     .from("orders")
     .select("*")
-    .ilike("full_name", `%${name}%`)
+    .ilike("full_name", `%${escapePattern(name)}%`)
     .order("order_date", { ascending: false });
 
   if (error) {
