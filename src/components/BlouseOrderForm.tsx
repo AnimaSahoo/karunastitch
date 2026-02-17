@@ -469,6 +469,124 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
             </CardContent>
           </Card>
 
+          {/* Design Options */}
+          <Card id="design" className="shadow-gold border-border scroll-mt-24">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <Palette className="h-5 w-5" />
+                Blouse Design
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <Tabs value={activeDesignTab} onValueChange={setActiveDesignTab}>
+                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-0 h-auto sm:h-10 mb-6">
+                  <TabsTrigger value="sample" className="py-2 sm:py-1">Sample Designs</TabsTrigger>
+                  <TabsTrigger value="sketch" className="py-2 sm:py-1">Sketch Design</TabsTrigger>
+                  <TabsTrigger value="reference" className="py-2 sm:py-1">Upload Reference</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="sample">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Choose from our popular blouse styles
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {sampleDesigns.map((design) => (
+                      <button
+                        key={design.id}
+                        type="button"
+                        onClick={() => setSelectedDesign(design.id)}
+                        className={`p-3 rounded-xl border-2 text-center transition-all ${
+                          selectedDesign === design.id
+                            ? "border-primary bg-primary/5 shadow-elegant"
+                            : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        <div className="aspect-[3/4] mb-2 overflow-hidden rounded-lg bg-muted flex items-center justify-center">
+                          {design.image ? (
+                            <img 
+                              src={design.image} 
+                              alt={design.name}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform"
+                            />
+                          ) : (
+                            <div className="text-muted-foreground text-center p-4">
+                              <ImageIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                              <span className="text-xs">Image coming soon</span>
+                            </div>
+                          )}
+                        </div>
+                        <span className="font-medium text-sm block">{design.name}</span>
+                        <span className="text-xs text-muted-foreground">{design.desc}</span>
+                        {selectedDesign === design.id && (
+                          <CheckCircle className="h-4 w-4 text-primary mx-auto mt-2" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="sketch">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Draw your custom blouse design on the canvas below
+                  </p>
+                  <div className="space-y-4">
+                    <SketchCanvas 
+                      customerName={formData.fullName}
+                      onSave={(dataUrl, designName) => {
+                        setSketchData(dataUrl);
+                        if (designName) {
+                          logger.info('BlouseOrderForm', `Design saved: ${designName}`);
+                        }
+                      }} 
+                    />
+                    <div>
+                      <Label htmlFor="designDesc">Additional Notes (Optional)</Label>
+                      <Textarea
+                        id="designDesc"
+                        value={designDescription}
+                        onChange={(e) => setDesignDescription(e.target.value)}
+                        placeholder="Add any details about neckline, sleeves, back design, embroidery patterns..."
+                        className="mt-1"
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="reference">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Upload an inspiration image (Pinterest, Instagram or your own sketch)
+                  </p>
+                  <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleReferenceUpload}
+                      className="hidden"
+                      id="reference-upload"
+                    />
+                    <label htmlFor="reference-upload" className="cursor-pointer">
+                      <ImageIcon className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
+                      <p className="font-medium">Upload reference image</p>
+                      <p className="text-sm text-muted-foreground">
+                        Show us what style you're looking for
+                      </p>
+                    </label>
+                  </div>
+                  {referenceImage && (
+                    <div className="mt-4">
+                      <img
+                        src={URL.createObjectURL(referenceImage)}
+                        alt="Reference"
+                        className="w-32 h-32 object-cover rounded-lg border border-border"
+                      />
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+
           {/* Measurements */}
           <Card className="shadow-gold border-border">
             <CardHeader>
@@ -694,124 +812,6 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                   I want guided measurement help (we'll assist you via video call)
                 </Label>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Design Options */}
-          <Card id="design" className="shadow-gold border-border scroll-mt-24">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-primary">
-                <Palette className="h-5 w-5" />
-                Blouse Design
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <Tabs value={activeDesignTab} onValueChange={setActiveDesignTab}>
-                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-0 h-auto sm:h-10 mb-6">
-                  <TabsTrigger value="sample" className="py-2 sm:py-1">Sample Designs</TabsTrigger>
-                  <TabsTrigger value="sketch" className="py-2 sm:py-1">Sketch Design</TabsTrigger>
-                  <TabsTrigger value="reference" className="py-2 sm:py-1">Upload Reference</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="sample">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Choose from our popular blouse styles
-                  </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    {sampleDesigns.map((design) => (
-                      <button
-                        key={design.id}
-                        type="button"
-                        onClick={() => setSelectedDesign(design.id)}
-                        className={`p-3 rounded-xl border-2 text-center transition-all ${
-                          selectedDesign === design.id
-                            ? "border-primary bg-primary/5 shadow-elegant"
-                            : "border-border hover:border-primary/50"
-                        }`}
-                      >
-                        <div className="aspect-[3/4] mb-2 overflow-hidden rounded-lg bg-muted flex items-center justify-center">
-                          {design.image ? (
-                            <img 
-                              src={design.image} 
-                              alt={design.name}
-                              className="w-full h-full object-cover hover:scale-105 transition-transform"
-                            />
-                          ) : (
-                            <div className="text-muted-foreground text-center p-4">
-                              <ImageIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                              <span className="text-xs">Image coming soon</span>
-                            </div>
-                          )}
-                        </div>
-                        <span className="font-medium text-sm block">{design.name}</span>
-                        <span className="text-xs text-muted-foreground">{design.desc}</span>
-                        {selectedDesign === design.id && (
-                          <CheckCircle className="h-4 w-4 text-primary mx-auto mt-2" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="sketch">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Draw your custom blouse design on the canvas below
-                  </p>
-                  <div className="space-y-4">
-                    <SketchCanvas 
-                      customerName={formData.fullName}
-                      onSave={(dataUrl, designName) => {
-                        setSketchData(dataUrl);
-                        if (designName) {
-                          logger.info('BlouseOrderForm', `Design saved: ${designName}`);
-                        }
-                      }} 
-                    />
-                    <div>
-                      <Label htmlFor="designDesc">Additional Notes (Optional)</Label>
-                      <Textarea
-                        id="designDesc"
-                        value={designDescription}
-                        onChange={(e) => setDesignDescription(e.target.value)}
-                        placeholder="Add any details about neckline, sleeves, back design, embroidery patterns..."
-                        className="mt-1"
-                        rows={3}
-                      />
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="reference">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Upload an inspiration image (Pinterest, Instagram or your own sketch)
-                  </p>
-                  <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleReferenceUpload}
-                      className="hidden"
-                      id="reference-upload"
-                    />
-                    <label htmlFor="reference-upload" className="cursor-pointer">
-                      <ImageIcon className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-                      <p className="font-medium">Upload reference image</p>
-                      <p className="text-sm text-muted-foreground">
-                        Show us what style you're looking for
-                      </p>
-                    </label>
-                  </div>
-                  {referenceImage && (
-                    <div className="mt-4">
-                      <img
-                        src={URL.createObjectURL(referenceImage)}
-                        alt="Reference"
-                        className="w-32 h-32 object-cover rounded-lg border border-border"
-                      />
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
             </CardContent>
           </Card>
 
