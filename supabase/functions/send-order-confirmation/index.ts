@@ -162,7 +162,7 @@ const handler = async (req: Request): Promise<Response> => {
     const formattedDeliveryDate = deliveryDate || "To be confirmed";
 
     const emailResponse = await resend.emails.send({
-      from: "Blouse & Beyond <noreply@blouseandbeyond.lovable.app>",
+      from: "Karuna Stitch <noreply@karunastitch.com>",
       to: [customerEmail],
       subject: `Order Confirmation - ${orderId.slice(0, 8).toUpperCase()}`,
       html: `
