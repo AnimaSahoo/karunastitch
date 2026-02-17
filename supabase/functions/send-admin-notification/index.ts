@@ -175,7 +175,7 @@ const handler = async (req: Request): Promise<Response> => {
     const safeCountry = escapeHtml(order.country);
 
     const emailResponse = await resend.emails.send({
-      from: "Blouse & Beyond <noreply@blouseandbeyond.lovable.app>",
+      from: "Karuna Stitch <noreply@karunastitch.com>",
       to: [ADMIN_EMAIL],
       subject: `🆕 New Order Received - ${orderId.slice(0, 8).toUpperCase()}`,
       html: `
