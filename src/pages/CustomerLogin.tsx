@@ -206,15 +206,24 @@ const CustomerLogin = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="space-y-1">
-          <div className="flex items-center gap-2 mb-4">
-            <Link to="/">
-              <Button variant="ghost" size="icon" aria-label="Back to home">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
-            <div className="flex items-center gap-2">
+      <div className="w-full max-w-md">
+        {/* Brand header */}
+        <div className="text-center mb-8">
+          <Link to="/" className="inline-block mb-2">
+            <ArrowLeft className="h-4 w-4 text-muted-foreground inline mr-1" />
+            <span className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Back to Home
+            </span>
+          </Link>
+          <h1 className="font-heading text-[32px] md:text-[36px] tracking-wide">
+            <span className="font-semibold text-primary">Karuna</span>{" "}
+            <span className="font-normal text-foreground">Stitch</span>
+          </h1>
+        </div>
+
+        <Card className="shadow-lg border-border/60">
+          <CardHeader className="text-center pb-2">
+            <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
               {formMode === "signup" ? (
                 <UserPlus className="h-5 w-5 text-primary" />
               ) : formMode === "forgot" ? (
@@ -222,157 +231,172 @@ const CustomerLogin = () => {
               ) : (
                 <Lock className="h-5 w-5 text-primary" />
               )}
-              <CardTitle className="text-2xl">{getTitle()}</CardTitle>
             </div>
-          </div>
-          <CardDescription>{getDescription()}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {formMode === "signup" && (
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
-                <Input
-                  id="fullName"
-                  type="text"
-                  placeholder="Your full name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required
-                  autoComplete="name"
-                  maxLength={100}
-                />
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                maxLength={255}
-              />
-            </div>
-
-            {formMode !== "forgot" && (
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
+            <CardTitle className="text-2xl">{getTitle()}</CardTitle>
+            <CardDescription className="mt-1">{getDescription()}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {formMode === "signup" && (
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name</Label>
                   <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    id="fullName"
+                    type="text"
+                    placeholder="Your full name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                     required
-                    autoComplete={formMode === "signup" ? "new-password" : "current-password"}
-                    className="pr-10"
+                    autoComplete="name"
+                    maxLength={100}
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                    tabIndex={-1}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </Button>
                 </div>
-                {formMode === "signup" && <PasswordStrengthIndicator password={password} />}
-              </div>
-            )}
-
-            {formMode === "signup" && (
-              <div className="flex items-start gap-2">
-                <Checkbox
-                  id="terms"
-                  checked={acceptedTerms}
-                  onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
-                  className="mt-1"
-                />
-                <Label htmlFor="terms" className="text-sm leading-relaxed cursor-pointer">
-                  I agree to the{" "}
-                  <Link
-                    to="/terms"
-                    target="_blank"
-                    className="text-primary underline hover:text-primary/80"
-                  >
-                    Terms & Conditions
-                  </Link>
-                </Label>
-              </div>
-            )}
-
-            <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {formMode === "forgot"
-                    ? "Sending..."
-                    : formMode === "signup"
-                      ? "Creating account..."
-                      : "Signing in..."}
-                </>
-              ) : formMode === "forgot" ? (
-                "Send Reset Link"
-              ) : formMode === "signup" ? (
-                "Create Account"
-              ) : (
-                "Sign In"
               )}
-            </Button>
 
-            {formMode === "login" && (
-              <Button
-                type="button"
-                variant="link"
-                className="w-full text-muted-foreground"
-                onClick={() => setFormMode("forgot")}
-              >
-                Forgot your password?
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  maxLength={255}
+                />
+              </div>
+
+              {formMode !== "forgot" && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Password</Label>
+                    {formMode === "login" && (
+                      <button
+                        type="button"
+                        className="text-xs text-primary hover:text-primary/80 transition-colors"
+                        onClick={() => setFormMode("forgot")}
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      autoComplete={formMode === "signup" ? "new-password" : "current-password"}
+                      className="pr-10"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </Button>
+                  </div>
+                  {formMode === "signup" && <PasswordStrengthIndicator password={password} />}
+                </div>
+              )}
+
+              {formMode === "signup" && (
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id="terms"
+                    checked={acceptedTerms}
+                    onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
+                    className="mt-1"
+                  />
+                  <Label htmlFor="terms" className="text-sm leading-relaxed cursor-pointer">
+                    I agree to the{" "}
+                    <Link
+                      to="/terms"
+                      target="_blank"
+                      className="text-primary underline hover:text-primary/80"
+                    >
+                      Terms & Conditions
+                    </Link>
+                  </Label>
+                </div>
+              )}
+
+              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {formMode === "forgot"
+                      ? "Sending..."
+                      : formMode === "signup"
+                        ? "Creating account..."
+                        : "Signing in..."}
+                  </>
+                ) : formMode === "forgot" ? (
+                  "Send Reset Link"
+                ) : formMode === "signup" ? (
+                  "Create Account"
+                ) : (
+                  "Sign In"
+                )}
               </Button>
-            )}
 
-            {formMode === "forgot" && (
-              <Button
-                type="button"
-                variant="ghost"
-                className="w-full"
-                onClick={() => setFormMode("login")}
-              >
-                Back to login
-              </Button>
-            )}
+              {formMode === "forgot" && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => setFormMode("login")}
+                >
+                  Back to login
+                </Button>
+              )}
+            </form>
 
+            {/* Mode toggle */}
             {formMode !== "forgot" && (
-              <Button
-                type="button"
-                variant="ghost"
-                className="w-full"
-                onClick={() => {
-                  setFormMode(formMode === "signup" ? "login" : "signup");
-                  setPassword("");
-                }}
-              >
-                {formMode === "signup"
-                  ? "Already have an account? Sign in"
-                  : "Don't have an account? Sign up"}
-              </Button>
+              <div className="mt-6 pt-6 border-t border-border text-center">
+                <p className="text-sm text-muted-foreground">
+                  {formMode === "signup" ? (
+                    <>
+                      Already have an account?{" "}
+                      <button
+                        type="button"
+                        className="text-primary font-medium hover:text-primary/80 transition-colors"
+                        onClick={() => { setFormMode("login"); setPassword(""); }}
+                      >
+                        Log in
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      New here?{" "}
+                      <button
+                        type="button"
+                        className="text-primary font-medium hover:text-primary/80 transition-colors"
+                        onClick={() => { setFormMode("signup"); setPassword(""); }}
+                      >
+                        Create Account
+                      </button>
+                    </>
+                  )}
+                </p>
+              </div>
             )}
-          </form>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       <OTPVerification
         open={showOTP}
