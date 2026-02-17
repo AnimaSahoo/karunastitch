@@ -59,7 +59,7 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
         <div className="flex items-center gap-3">
           <img src={logo} alt="Karuna Stitch" className="h-12 w-auto" />
           <span className="text-xl hidden sm:inline font-heading brand-name text-white/90">
-            <span className="brand-primary text-[hsl(340_55%_65%)] font-semibold">Karuna</span>
+            <span className="brand-primary text-[hsl(345_56%_27%)] font-semibold">Karuna</span>
             <span> </span>
             <span className="font-medium">Stitch</span>
           </span>
@@ -153,7 +153,7 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
 
           {/* Brand Name */}
           <h1 className="mb-0" style={{ fontSize: '54px', letterSpacing: '0.5px', lineHeight: 1.1 }}>
-            <span className="text-[hsl(340_55%_65%)] font-semibold">Karuna</span>
+            <span className="text-[hsl(345_56%_50%)] font-semibold">Karuna</span>
             <span className="text-white/95 font-normal"> Stitch</span>
           </h1>
           
