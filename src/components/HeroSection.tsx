@@ -42,7 +42,9 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           alt="Beautifully crafted saree blouses with traditional Indian embroidery" 
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/40" />
+        {/* Warm dark overlay for premium boutique feel */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(30_20%_10%/0.85)] via-[hsl(30_15%_15%/0.55)] to-[hsl(30_10%_20%/0.25)]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[hsl(30_20%_10%/0.30)] via-transparent to-[hsl(30_15%_15%/0.15)]" />
       </div>
 
       {/* Header/Navigation */}
@@ -150,24 +152,24 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
 
           {/* Brand Name */}
           <h1 className="mb-0" style={{ fontSize: '54px', letterSpacing: '0.5px', lineHeight: 1.1 }}>
-            <span className="text-primary font-semibold">Karuna</span>
-            <span className="text-foreground font-normal"> Stitch</span>
+            <span className="text-[hsl(340_55%_65%)] font-semibold">Karuna</span>
+            <span className="text-white/95 font-normal"> Stitch</span>
           </h1>
           
           {/* Tagline */}
-          <p className="font-body text-muted-foreground" style={{ fontSize: '21px', lineHeight: 1.4, marginTop: '18px' }}>
+          <p className="font-body text-white/80" style={{ fontSize: '21px', lineHeight: 1.4, marginTop: '18px' }}>
             Custom Saree Blouses Designed to Fit You Perfectly
           </p>
           
           {/* Intro Text */}
           <div className="space-y-4 mb-10" style={{ maxWidth: '590px', marginTop: '22px' }}>
-            <p className="font-body text-muted-foreground" style={{ fontSize: '16.5px', lineHeight: 1.65 }}>
+            <p className="font-body text-white/70" style={{ fontSize: '16.5px', lineHeight: 1.65 }}>
               Beautiful custom blouses handcrafted by skilled artisans in Odisha, India. 
               Every stitch supports differently-abled women in building sustainable livelihoods.
             </p>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <div className="flex items-center gap-6 text-sm text-white/60">
               <span className="flex items-center gap-1">
-                <Heart className="h-4 w-4 text-primary" />
+                <Heart className="h-4 w-4 text-[hsl(340_55%_65%)]" />
                 Social Impact
               </span>
               <span>•</span>
@@ -188,8 +190,8 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           </Button>
           
           {/* Price Highlight */}
-          <p className="mt-6 text-muted-foreground">
-            Starting at <span className="font-semibold text-foreground">$20</span> per blouse
+          <p className="mt-6 text-white/60">
+            Starting at <span className="font-semibold text-white/90">$20</span> per blouse
           </p>
         </div>
       </div>
