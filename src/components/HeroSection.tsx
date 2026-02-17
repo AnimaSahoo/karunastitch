@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, ClipboardList, Menu, MessageSquare } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/blouse-beyond-logo.png";
@@ -22,7 +22,16 @@ const navLinks = [
 export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { isAdmin } = useAuth();
+  const { isAdmin, user, isFullyAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleDesignClick = () => {
+    if (!user || !isFullyAuthenticated) {
+      navigate("/login?redirect=/#order-form");
+    } else {
+      onDesignClick();
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -182,7 +191,7 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           
           {/* CTA Button */}
           <Button 
-            onClick={onDesignClick}
+            onClick={handleDesignClick}
             size="lg"
             className="text-lg px-10 py-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-elegant transition-all hover:scale-105"
           >
