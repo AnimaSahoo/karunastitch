@@ -17,7 +17,7 @@ All colors MUST be HSL.
     --popover: 42 30% 99%;
     --popover-foreground: 25 20% 20%;
 
-    --primary: 340 55% 40%;
+    --primary: 348 64% 27%;
     --primary-foreground: 42 30% 99%;
 
     --secondary: 40 25% 94%;
@@ -26,7 +26,7 @@ All colors MUST be HSL.
     --muted: 40 20% 95%;
     --muted-foreground: 25 18% 37%;
 
-    --accent: 340 45% 50%;
+    --accent: 348 50% 35%;
     --accent-foreground: 42 30% 99%;
 
     --destructive: 0 84.2% 60.2%;
@@ -34,13 +34,13 @@ All colors MUST be HSL.
 
     --border: 40 20% 88%;
     --input: 40 20% 94%;
-    --ring: 340 55% 40%;
+    --ring: 348 64% 27%;
 
     /* Indian-inspired design tokens - light cream/beige with deep rose accents */
-    --royal-red: 340 55% 40%;
-    --royal-red-light: 340 40% 60%;
-    --gold: 35 45% 55%;
-    --gold-light: 40 40% 75%;
+    --royal-red: 348 64% 27%;
+    --royal-red-light: 348 50% 38%;
+    --gold: 42 53% 54%;
+    --gold-light: 42 45% 68%;
     --emerald: 160 40% 35%;
     --emerald-light: 160 35% 60%;
     --cream: 42 30% 96%;
