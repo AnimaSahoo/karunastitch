@@ -763,7 +763,7 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
                       onSave={(dataUrl, designName) => {
                         setSketchData(dataUrl);
                         if (designName) {
-                          console.log(`Design saved: ${designName}`);
+                          logger.info('BlouseOrderForm', `Design saved: ${designName}`);
                         }
                       }} 
                     />
