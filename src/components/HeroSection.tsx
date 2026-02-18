@@ -157,8 +157,8 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
       {/* Spacer for fixed header */}
       <div className="h-16" />
 
-      <div className="container mx-auto px-4 py-16 relative z-10 flex-1 flex items-center">
-        <div className="max-w-2xl">
+      <div className="container mx-auto px-4 py-16 relative z-10 flex-1 flex items-center justify-center">
+        <div className="max-w-2xl text-center">
 
           {/* Brand Name */}
           <h1 className="mb-0" style={{ fontSize: '54px', letterSpacing: '0.5px', lineHeight: 1.1 }}>
@@ -172,12 +172,12 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           </p>
           
           {/* Intro Text */}
-          <div className="space-y-4 mb-10" style={{ maxWidth: '590px', marginTop: '22px' }}>
+          <div className="space-y-4 mb-10 mx-auto" style={{ maxWidth: '590px', marginTop: '22px' }}>
             <p className="font-body text-white/70" style={{ fontSize: '16.5px', lineHeight: 1.65 }}>
               Beautiful custom blouses handcrafted by skilled artisans in Odisha, India. 
               Every stitch supports differently-abled women in building sustainable livelihoods.
             </p>
-            <div className="flex items-center gap-6 text-sm text-white/60">
+            <div className="flex items-center justify-center gap-6 text-sm text-white/60">
               <span className="flex items-center gap-1">
                 <Heart className="h-4 w-4 text-[hsl(340_55%_65%)]" />
                 Social Impact
