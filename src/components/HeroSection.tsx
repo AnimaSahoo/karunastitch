@@ -199,10 +199,6 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
             <Sparkles className="ml-2 h-5 w-5" />
           </Button>
           
-          {/* Price Highlight */}
-          <p className="mt-6 text-white/60">
-            Starting at <span className="font-semibold text-white/90">$20</span> per blouse
-          </p>
         </div>
       </div>
     </section>
