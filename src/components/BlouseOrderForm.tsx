@@ -263,6 +263,55 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
       const { saveOrder, setCurrentOrder } = await import("@/lib/orderUtils");
       const { supabase } = await import("@/integrations/supabase/client");
       const savedOrder = await saveOrder(orderData);
+
+      // Upload reference image to storage if present
+      if (savedOrder && referenceImage && user) {
+        const fileExt = referenceImage.name.split('.').pop();
+        const filePath = `${user.id}/${savedOrder.id}/reference.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('order-files')
+          .upload(filePath, referenceImage, { upsert: true });
+
+        if (uploadError) {
+          logger.error("BlouseOrderForm.uploadReferenceImage", uploadError);
+        } else {
+          // Update order with the file URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('order-files')
+            .getPublicUrl(filePath);
+
+          await supabase
+            .from('orders')
+            .update({ design_description: `${orderData.designDescription}\n\nReference Image: ${publicUrl}` })
+            .eq('id', savedOrder.id);
+        }
+      }
+
+      // Upload sketch data to storage if present
+      if (savedOrder && sketchData && user) {
+        const sketchBlob = await fetch(sketchData).then(r => r.blob());
+        const filePath = `${user.id}/${savedOrder.id}/sketch.png`;
+        const { error: sketchUploadError } = await supabase.storage
+          .from('order-files')
+          .upload(filePath, sketchBlob, { contentType: 'image/png', upsert: true });
+
+        if (sketchUploadError) {
+          logger.error("BlouseOrderForm.uploadSketch", sketchUploadError);
+        } else {
+          const { data: { publicUrl } } = supabase.storage
+            .from('order-files')
+            .getPublicUrl(filePath);
+
+          const currentDesc = referenceImage
+            ? `${orderData.designDescription}\n\nReference Image: (uploaded above)`
+            : orderData.designDescription;
+
+          await supabase
+            .from('orders')
+            .update({ design_description: `${currentDesc}\n\nSketch: ${publicUrl}` })
+            .eq('id', savedOrder.id);
+        }
+      }
       
       if (savedOrder) {
         // Record this submission for rate limiting
