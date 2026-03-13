@@ -189,10 +189,9 @@ const Checkout = () => {
             </div>
 
             <div className="border-t pt-4">
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold">Total</span>
-                <span className="text-2xl font-bold text-primary">$20.00</span>
-              </div>
+              <p className="text-center text-muted-foreground">
+                Complete your order to receive confirmation details.
+              </p>
             </div>
           </CardContent>
         </Card>
