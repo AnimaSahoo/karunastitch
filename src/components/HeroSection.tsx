@@ -174,8 +174,8 @@ export const HeroSection = ({ onDesignClick }: HeroSectionProps) => {
           {/* Intro Text */}
           <div className="space-y-4 mb-10 mx-auto" style={{ maxWidth: '590px', marginTop: '22px' }}>
             <p className="font-body text-white/70" style={{ fontSize: '16.5px', lineHeight: 1.65 }}>
-              Beautiful custom blouses handcrafted by skilled artisans in Odisha, India. 
-              Every stitch supports differently-abled women in building sustainable livelihoods.
+              Beautiful custom blouses handcrafted by skilled artisans in Odisha, India.
+              Every stitch supports talented differently-abled women artisans.
             </p>
             <div className="flex items-center justify-center gap-6 text-sm text-white/60">
               <span className="flex items-center gap-1">
