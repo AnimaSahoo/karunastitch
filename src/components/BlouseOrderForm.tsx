@@ -938,11 +938,6 @@ export const BlouseOrderForm = ({ onSubmit }: BlouseOrderFormProps) => {
           <Card className="shadow-elegant border-primary">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                  <p className="text-2xl font-bold text-primary">$20</p>
-                  <p className="text-sm text-muted-foreground">per blouse</p>
-                </div>
-
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="customItem"
