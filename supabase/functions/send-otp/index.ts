@@ -106,7 +106,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send OTP via email
     await resend.emails.send({
-      from: "Karuna Stitch <noreply@blouseandbeyond.lovable.app>",
+      from: "Karuna Stitch <noreply@karunastitch.com>",
       to: [user.email],
       subject: "Your Verification Code - Karuna Stitch",
       html: `
