@@ -4,7 +4,7 @@ import { Heart, Sparkles, ClipboardList, Menu, MessageSquare } from "lucide-reac
 import { Link, useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
-import logo from "@/assets/blouse-beyond-logo.png";
+import logo from "@/assets/karunastitch-logo-new.png";
 import heroImage from "@/assets/hero-image.jpg";
 
 interface HeroSectionProps {
