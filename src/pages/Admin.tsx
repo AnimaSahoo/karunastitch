@@ -521,15 +521,15 @@ const Admin = () => {
                   </div>
                   {selectedOrder.designDescription && (() => {
                     const desc = selectedOrder.designDescription;
-                    const refImageMatch = desc.match(/Reference Image: (https?:\/\/[^\s
-]+)/);
-                    const sketchMatch = desc.match(/Sketch: (https?:\/\/[^\s
-]+)/);
+                    const refImageMatch = desc.match(/Reference Image: (https?:\/\/\S+)/);
+                    const sketchMatch = desc.match(/Sketch: (https?:\/\/\S+)/);
                     const cleanDesc = desc
-                      .replace(/\n\nReference Image: https?:\/\/[^\s
-]+/, "")
-                      .replace(/\n\nSketch: https?:\/\/[^\s
-]+/, "")
+                      .replace(/
+
+Reference Image: https?:\/\/\S+/, "")
+                      .replace(/
+
+Sketch: https?:\/\/\S+/, "")
                       .trim();
                     return (
                       <div className="mt-4 space-y-3">
