@@ -335,3 +335,46 @@ export const getOrderCount = async (): Promise<number> => {
 
   return count || 0;
 };
+
+// Update order measurements
+export const updateOrderMeasurements = async (
+  orderId: string,
+  measurements: {
+    shoulder?: string;
+    shoulderFullLength?: string;
+    frontNeckDepth?: string;
+    chest?: string;
+    waist?: string;
+    backNeckDepth?: string;
+    blouseLength?: string;
+    sleeveLength?: string;
+    sleeveRound?: string;
+    armHole?: string;
+    specialRequests?: string;
+  }
+): Promise<boolean> => {
+  const { error } = await supabase
+    .from("orders")
+    .update({
+      shoulder: measurements.shoulder,
+      full_shoulder: measurements.shoulderFullLength,
+      front_neck_depth: measurements.frontNeckDepth,
+      chest: measurements.chest,
+      waist: measurements.waist,
+      back_neck_depth: measurements.backNeckDepth,
+      blouse_back_length: measurements.blouseLength,
+      sleeve_length: measurements.sleeveLength,
+      sleeve_round: measurements.sleeveRound,
+      arm_hole: measurements.armHole,
+      special_requests: measurements.specialRequests,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", orderId);
+
+  if (error) {
+    logger.error("updateOrderMeasurements", error);
+    return false;
+  }
+
+  return true;
+};
