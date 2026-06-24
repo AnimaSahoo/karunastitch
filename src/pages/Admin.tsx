@@ -519,9 +519,53 @@ const Admin = () => {
                     <div><p className="text-muted-foreground">Selected Design</p><p className="font-medium">{selectedOrder.selectedDesign || "N/A"}</p></div>
                     <div><p className="text-muted-foreground">Extra Cloths/Laces</p><p className="font-medium">{selectedOrder.extraClothsLaces || "No"}</p></div>
                   </div>
-                  {selectedOrder.designDescription && (
-                    <div className="mt-4"><p className="text-muted-foreground text-sm">Design Description</p><p className="font-medium text-sm">{selectedOrder.designDescription}</p></div>
-                  )}
+                  {selectedOrder.designDescription && (() => {
+                    const desc = selectedOrder.designDescription;
+                    const refImageMatch = desc.match(/Reference Image: (https?:\/\/[^\s
+]+)/);
+                    const sketchMatch = desc.match(/Sketch: (https?:\/\/[^\s
+]+)/);
+                    const cleanDesc = desc
+                      .replace(/\n\nReference Image: https?:\/\/[^\s
+]+/, "")
+                      .replace(/\n\nSketch: https?:\/\/[^\s
+]+/, "")
+                      .trim();
+                    return (
+                      <div className="mt-4 space-y-3">
+                        {cleanDesc && (
+                          <div>
+                            <p className="text-muted-foreground text-sm">Design Description</p>
+                            <p className="font-medium text-sm">{cleanDesc}</p>
+                          </div>
+                        )}
+                        {refImageMatch && (
+                          <div>
+                            <p className="text-muted-foreground text-sm mb-2">Reference Image</p>
+                            <img
+                              src={refImageMatch[1]}
+                              alt="Reference design"
+                              className="rounded-lg border max-h-64 object-contain w-full"
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                            />
+                            <a href={refImageMatch[1]} target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline mt-1 inline-block">Open full image ↗</a>
+                          </div>
+                        )}
+                        {sketchMatch && (
+                          <div>
+                            <p className="text-muted-foreground text-sm mb-2">Customer Sketch</p>
+                            <img
+                              src={sketchMatch[1]}
+                              alt="Customer sketch"
+                              className="rounded-lg border max-h-64 object-contain w-full"
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                            />
+                            <a href={sketchMatch[1]} target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline mt-1 inline-block">Open full image ↗</a>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Order Info */}
