@@ -521,15 +521,18 @@ const Admin = () => {
                   </div>
                   {selectedOrder.designDescription && (() => {
                     const desc = selectedOrder.designDescription;
-                    const refImageMatch = desc.match(/Reference Image: (https?:\/\/\S+)/);
-                    const sketchMatch = desc.match(/Sketch: (https?:\/\/\S+)/);
+                    const extractUrl = (text: string, prefix: string): string | null => {
+                      const idx = text.indexOf(prefix);
+                      if (idx === -1) return null;
+                      const start = idx + prefix.length;
+                      const end = text.indexOf("\n", start);
+                      return end === -1 ? text.slice(start).trim() : text.slice(start, end).trim();
+                    };
+                    const refImageUrl = extractUrl(desc, "Reference Image: ");
+                    const sketchUrl = extractUrl(desc, "Sketch: ");
                     const cleanDesc = desc
-                      .replace(/
-
-Reference Image: https?:\/\/\S+/, "")
-                      .replace(/
-
-Sketch: https?:\/\/\S+/, "")
+                      .split("\n\nReference Image: ")[0]
+                      .split("\n\nSketch: ")[0]
                       .trim();
                     return (
                       <div className="mt-4 space-y-3">
@@ -539,28 +542,28 @@ Sketch: https?:\/\/\S+/, "")
                             <p className="font-medium text-sm">{cleanDesc}</p>
                           </div>
                         )}
-                        {refImageMatch && (
+                        {refImageUrl && (
                           <div>
                             <p className="text-muted-foreground text-sm mb-2">Reference Image</p>
                             <img
-                              src={refImageMatch[1]}
+                              src={refImageUrl}
                               alt="Reference design"
                               className="rounded-lg border max-h-64 object-contain w-full"
                               onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                             />
-                            <a href={refImageMatch[1]} target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline mt-1 inline-block">Open full image ↗</a>
+                            <a href={refImageUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline mt-1 inline-block">Open full image ↗</a>
                           </div>
                         )}
-                        {sketchMatch && (
+                        {sketchUrl && (
                           <div>
                             <p className="text-muted-foreground text-sm mb-2">Customer Sketch</p>
                             <img
-                              src={sketchMatch[1]}
+                              src={sketchUrl}
                               alt="Customer sketch"
                               className="rounded-lg border max-h-64 object-contain w-full"
                               onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                             />
-                            <a href={sketchMatch[1]} target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline mt-1 inline-block">Open full image ↗</a>
+                            <a href={sketchUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline mt-1 inline-block">Open full image ↗</a>
                           </div>
                         )}
                       </div>
