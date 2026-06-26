@@ -18,7 +18,7 @@ export async function handler(event) {
         "Authorization": `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "KarunaStitch <onboarding@resend.dev>",
+        from: "KarunaStitch <noreply@karunastitch.com>",
         to: [customerEmail],
         subject: `✦ Order Confirmed – KarunaStitch #${shortOrderId}`,
         html: `
@@ -81,7 +81,7 @@ export async function handler(event) {
         "Authorization": `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "KarunaStitch <onboarding@resend.dev>",
+        from: "KarunaStitch <noreply@karunastitch.com>",
         to: ["sahoo.anima@gmail.com"],
         subject: `✦ New Order #${shortOrderId} – ${customerName}`,
         html: `
